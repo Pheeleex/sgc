@@ -13,10 +13,10 @@ const SocialMedia = () => {
         </a>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {[...Array(6)].map((_, index) => (
+        {[...Array(4)].map((_, index) => (
           <div key={index} className="aspect-square overflow-hidden rounded-md relative group">
             <img 
-              src={`/Images/Pinteresty2.jpg`} 
+              src={`/Images/pinteresty10.jpg`} 
               alt="Instagram post" 
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
