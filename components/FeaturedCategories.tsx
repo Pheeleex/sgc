@@ -4,7 +4,7 @@ import React from 'react'
 const FeaturedCategories = () => {
     
   const categories = [
-    { name: 'Fashion', imageUrl: 'Images/Pinteresty10.jpg', description: 'Seasonal trends and timeless classics' },
+    { name: 'Fashion', imageUrl: 'Images/Pinteresty5.jpg', description: 'Seasonal trends and timeless classics' },
     { name: 'Hair Care', imageUrl: '/Images/Pinteresty1.jpg', description: 'Natural solutions for radiant hair' },
     { name: 'Skin Care', imageUrl: '/Images/Pinteresty4.jpg', description: 'Routines for healthy, glowing skin' },
     { name: 'Wellness', imageUrl: '/Images/Pinteresty6.jpg', description: 'Holistic approaches to self-care' }
