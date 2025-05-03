@@ -4,6 +4,7 @@ import FeaturedCategories from '@/components/FeaturedCategories'
 import Footer from '@/components/Footer'
 import Hero from '@/components/Hero'
 import Posts from '@/components/Posts'
+import RecommendedProducts from '@/components/Products'
 import RecentPosts from '@/components/RecentPosts'
 import SocialMedia from '@/components/SocialMedia'
 import React from 'react'
@@ -15,6 +16,7 @@ const page = () => {
       <FeaturedCategories />
       <Posts />
       <Banner />
+      <RecommendedProducts />
       <SocialMedia />
       <Footer />
     </div>

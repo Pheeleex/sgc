@@ -6,7 +6,7 @@ const FeaturedCategories = () => {
   const categories = [
     { name: 'Fashion', imageUrl: 'Images/pinteresty5.jpg', description: 'Seasonal trends and timeless classics' },
     { name: 'Hair Care', imageUrl: '/Images/pinteresty1.jpg', description: 'Natural solutions for radiant hair' },
-    { name: 'Skin Care', imageUrl: '/Images/pinteresty4.jpg', description: 'Routines for healthy, glowing skin' },
+    { name: 'Skin Care', imageUrl: '/Images/pinteresty10.jpg', description: 'Routines for healthy, glowing skin' },
     { name: 'Wellness', imageUrl: '/Images/pinteresty6.jpg', description: 'Holistic approaches to self-care' }
   ];
 

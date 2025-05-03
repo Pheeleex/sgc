@@ -8,7 +8,7 @@ const Footer = () => {
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
         <div>
-          <h3 className="text-2xl font-serif font-bold text-rose-400 mb-6">BLOOM</h3>
+          <h3 className="text-2xl font-serif font-bold text-rose-400 mb-6">Soft girl corner</h3>
           <p className="text-neutral-400 mb-6">Empowering women through beauty, fashion, and wellness insights that celebrate individuality and self-expression.</p>
           <div className="flex space-x-4">
             <a href="#" className="text-neutral-400 hover:text-rose-400 transition-colors">
@@ -49,7 +49,7 @@ const Footer = () => {
           <h4 className="text-lg font-semibold mb-6">Contact Us</h4>
           <div className="flex items-start mb-4">
             <Mail size={20} className="text-rose-400 mr-4 mt-1 flex-shrink-0" />
-            <p className="text-neutral-400">hello@bloomblog.com</p>
+            <p className="text-neutral-400">hello@ehi.com</p>
           </div>
           <p className="text-neutral-400 mb-6">Subscribe to our newsletter for weekly beauty tips and inspiration.</p>
           <div className="flex">
@@ -65,7 +65,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="border-t border-neutral-800 pt-8 mt-8 text-center text-neutral-500 text-sm">
-        <p>© {new Date().getFullYear()} BLOOM Blog. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} SGC Blog. All rights reserved.</p>
       </div>
     </div>
   </footer>
