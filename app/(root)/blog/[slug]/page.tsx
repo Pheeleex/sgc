@@ -23,6 +23,12 @@ interface Post {
   date: string;
 }
 
+export async function generateStaticParams() {
+  return featuredPosts.map((post) => ({
+    slug: post.slug,
+  }));
+}
+
 export default async function BlogPostPage({ params }: PageProps) { 
   
   const post: Post | undefined =  featuredPosts.find((p) => p.slug === params.slug);
