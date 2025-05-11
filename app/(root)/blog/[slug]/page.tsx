@@ -7,8 +7,8 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 
 interface PageProps {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 interface Post {
@@ -22,9 +22,10 @@ interface Post {
   date: string;
 }
 
-export default async function BlogPostPage({ params }: PageProps) {
+export default async function BlogPostPage(props: PageProps) {
+  const params = await props.params;
   const { slug } = await params; // Await the promise to get the resolved value
-  
+
   const post: Post | undefined = featuredPosts.find((p) => p.slug === slug);  // Use `slug` directly
   const currentPost: Post = post || featuredPosts[0];
 
@@ -90,7 +91,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       );
     });
   };
-  
+
   const readTime: number = Math.max(1, Math.ceil(currentPost.content.split(' ').length / 200));
 
   return (

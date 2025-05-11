@@ -1,14 +1,15 @@
 import React from 'react'
 
 interface PageProps {
-    params: {
+    params: Promise<{
       section: string;
-    };
+    }>;
   }
 
-const page = ({params}: PageProps) => {
-    const { section } = params;
-    console.log(section); // This will log the section parameter to the console
+const page = async (props: PageProps) => {
+  const params = await props.params;
+  const { section } = params;
+  console.log(section); // This will log the section parameter to the console
   return (
     <div>
       This is {section} page
