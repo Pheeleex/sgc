@@ -22,7 +22,7 @@ interface Post {
   date: string;
 }
 
-export default async function BlogPostPage({ params }: PageProps) { 
+export default function BlogPostPage({ params }: PageProps) { 
   const { slug } = params;
   const post: Post | undefined = featuredPosts.find((p) => p.slug === slug);  // Use `slug` directly
   const currentPost: Post = post || featuredPosts[0];
