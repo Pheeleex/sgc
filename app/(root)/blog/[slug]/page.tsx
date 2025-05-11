@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 
 interface PageProps {
-  params: { slug: string };  // Updated to not be wrapped in a Promise
+  params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
@@ -22,14 +22,15 @@ interface Post {
   date: string;
 }
 
-export default function BlogPostPage({ params }: PageProps) { 
-  const { slug } = params;
+export default async function BlogPostPage({ params }: PageProps) {
+  const { slug } = await params; // Await the promise to get the resolved value
+  
   const post: Post | undefined = featuredPosts.find((p) => p.slug === slug);  // Use `slug` directly
   const currentPost: Post = post || featuredPosts[0];
 
   console.log('params', params);
   console.log('post', post);
-  console.log('currentPost', currentPost);
+  console.log('currentPosting', currentPost);
 
   if (!post) notFound(); // This triggers 404
 
