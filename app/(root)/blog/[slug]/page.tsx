@@ -27,6 +27,10 @@ export default function BlogPostPage({ params }: PageProps) {
   const post: Post | undefined = featuredPosts.find((p) => p.slug === slug);  // Use `slug` directly
   const currentPost: Post = post || featuredPosts[0];
 
+  console.log('params', params);
+  console.log('post', post);
+  console.log('currentPost', currentPost);
+
   if (!post) notFound(); // This triggers 404
 
   const relatedPosts = featuredPosts
