@@ -23,7 +23,7 @@ interface Post {
   date: string;
 }
 
-const BlogPostPage: FC<PageProps> = ({ params }) => {
+export default async function BlogPostPage({ params }: PageProps) { 
   
   const post: Post | undefined = featuredPosts.find((p) => p.slug === params.slug);
   const currentPost: Post = post || featuredPosts[0];
@@ -203,4 +203,4 @@ const BlogPostPage: FC<PageProps> = ({ params }) => {
   );
 };
 
-export default BlogPostPage;
+
