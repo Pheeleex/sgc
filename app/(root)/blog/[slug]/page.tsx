@@ -1,15 +1,14 @@
 import Link from 'next/link';
-import {
-  Calendar, Clock, Tag, ChevronLeft,
-} from 'lucide-react';
+import { Calendar, Clock, Tag, ChevronLeft } from 'lucide-react';
 import { featuredPosts } from '@/lib/data/blog';
 import { InteractionBar } from '@/components/InteractionBar';
 import React, { FC } from 'react';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
 
 interface PageProps {
-  params: {
-    slug: string;
-  };
+  params: { slug: string };  // Updated to not be wrapped in a Promise
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
 interface Post {
@@ -23,76 +22,70 @@ interface Post {
   date: string;
 }
 
-export async function generateStaticParams() {
-  return featuredPosts.map((post) => ({
-    slug: post.slug,
-  }));
-}
-
 export default async function BlogPostPage({ params }: PageProps) { 
-  
-  const post: Post | undefined =  featuredPosts.find((p) => p.slug === params.slug);
+  const { slug } = params;
+  const post: Post | undefined = featuredPosts.find((p) => p.slug === slug);  // Use `slug` directly
   const currentPost: Post = post || featuredPosts[0];
 
- 
+  if (!post) notFound(); // This triggers 404
 
   const relatedPosts = featuredPosts
     .filter((p) => p.id !== currentPost.id)
     .slice(0, 2);
 
-    const formatContent = (content: string): React.ReactNode=> {
-        const paragraphs = content.split('\n\n');
-      
-        return paragraphs.map((para, idx) => {
-          // Handle numbered lists
-          if (/^\d+\.\s/.test(para)) {
-            const listItems = para.match(/\d+\.\s.*?(?=(\d+\.|$))/gs);
-      
+  const formatContent = (content: string): React.ReactNode => {
+    const paragraphs = content.split('\n\n');
+  
+    return paragraphs.map((para, idx) => {
+      // Handle numbered lists
+      if (/^\d+\.\s/.test(para)) {
+        const listItems = para.match(/\d+\.\s.*?(?=(\d+\.|$))/gs);
+  
+        return (
+          <ol key={idx} className="list-decimal list-inside mb-4 space-y-2 text-gray-700">
+            {listItems?.map((item, i) => {
+              const cleanedItem = item.replace(/^\d+\.\s/, '').trim();
+              return <li key={i}>{cleanedItem}</li>;
+            })}
+          </ol>
+        );
+      }
+  
+      // Handle short headers
+      if (para.includes(':') && para.length < 50) {
+        return (
+          <h2 key={idx} className="text-2xl font-bold my-6 text-gray-900">
+            {para}
+          </h2>
+        );
+      }
+  
+      // Handle definition-style sub-items like "Ceramides: Help restore..."
+      if (para.includes(':') && para.length > 50) {
+        const parts = para.split('\n').map((line, i) => {
+          if (line.includes(':')) {
+            const [term, definition] = line.split(/:(.+)/);
             return (
-              <ol key={idx} className="list-decimal list-inside mb-4 space-y-2 text-gray-700">
-                {listItems?.map((item, i) => {
-                  const cleanedItem = item.replace(/^\d+\.\s/, '').trim();
-                  return <li key={i}>{cleanedItem}</li>;
-                })}
-              </ol>
+              <p key={i} className="mb-2">
+                <strong className="text-gray-900">{term.trim()}:</strong>{' '}
+                <span className="text-gray-700">{definition.trim()}</span>
+              </p>
             );
           }
-      
-          // Handle short headers
-          if (para.includes(':') && para.length < 50) {
-            return (
-              <h2 key={idx} className="text-2xl font-bold my-6 text-gray-900">
-                {para}
-              </h2>
-            );
-          }
-      
-          // Handle definition-style sub-items like "Ceramides: Help restore..."
-          if (para.includes(':') && para.length > 50) {
-            const parts = para.split('\n').map((line, i) => {
-              if (line.includes(':')) {
-                const [term, definition] = line.split(/:(.+)/);
-                return (
-                  <p key={i} className="mb-2">
-                    <strong className="text-gray-900">{term.trim()}:</strong>{' '}
-                    <span className="text-gray-700">{definition.trim()}</span>
-                  </p>
-                );
-              }
-              return <p key={i} className="mb-4 text-gray-700 leading-relaxed">{line}</p>;
-            });
-            return <div key={idx} className="mb-4">{parts}</div>;
-          }
-      
-          // Default paragraph
-          return (
-            <p key={idx} className="mb-4 text-gray-700 leading-relaxed">
-              {para}
-            </p>
-          );
+          return <p key={i} className="mb-4 text-gray-700 leading-relaxed">{line}</p>;
         });
-      };
-      
+        return <div key={idx} className="mb-4">{parts}</div>;
+      }
+  
+      // Default paragraph
+      return (
+        <p key={idx} className="mb-4 text-gray-700 leading-relaxed">
+          {para}
+        </p>
+      );
+    });
+  };
+  
   const readTime: number = Math.max(1, Math.ceil(currentPost.content.split(' ').length / 200));
 
   return (
@@ -112,10 +105,12 @@ export default async function BlogPostPage({ params }: PageProps) {
 
           {/* Hero Image */}
           <div className="relative h-80">
-            <img
+            <Image
               src={currentPost.imageUrl}
               alt={currentPost.title}
               className="w-full h-full object-cover"
+              layout="fill"
+              priority
             />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50"></div>
             <div className="absolute top-4 left-4">
@@ -151,8 +146,8 @@ export default async function BlogPostPage({ params }: PageProps) {
           </article>
 
           {/* Interaction Bar */}
-         
-            <InteractionBar />
+          <InteractionBar />
+          
           {/* Tags */}
           <div className="px-8 py-4 border-t border-gray-100">
             <div className="flex items-start mb-2">
@@ -210,5 +205,3 @@ export default async function BlogPostPage({ params }: PageProps) {
     </div>
   );
 };
-
-
