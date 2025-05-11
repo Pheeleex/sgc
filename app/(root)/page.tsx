@@ -1,7 +1,6 @@
 
 import Banner from '@/components/Banner'
 import FeaturedCategories from '@/components/FeaturedCategories'
-import Footer from '@/components/Footer'
 import Hero from '@/components/Hero'
 import Posts from '@/components/Posts'
 import RecommendedProducts from '@/components/Products'
@@ -18,7 +17,7 @@ const page = () => {
       <Banner />
       <RecommendedProducts />
       <SocialMedia />
-      <Footer />
+      
     </div>
   )
 }

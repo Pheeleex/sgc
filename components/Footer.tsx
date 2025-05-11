@@ -8,7 +8,7 @@ const Footer = () => {
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
         <div>
-          <h3 className="text-2xl font-serif font-bold text-rose-400 mb-6">Soft girl corner</h3>
+          <h3 className="text-2xl font-serif font-bold text-rose-400 mb-6">Soft girl circle</h3>
           <p className="text-neutral-400 mb-6">Empowering women through beauty, fashion, and wellness insights that celebrate individuality and self-expression.</p>
           <div className="flex space-x-4">
             <a href="#" className="text-neutral-400 hover:text-rose-400 transition-colors">

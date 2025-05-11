@@ -4,6 +4,8 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { featuredPosts } from '@/lib/data/blog';
 
 type AnimationSettings = {
   cardYOffset: number;
@@ -32,29 +34,7 @@ const Posts = () => {
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
 
-  const featuredPosts = [
-    {
-      title: 'Summer Capsule Wardrobe Essentials',
-      category: 'Fashion',
-      imageUrl: '/Images/fashion.jpg',
-      date: 'April 30, 2025',
-      excerpt: 'Build a versatile summer wardrobe with these ten timeless pieces that mix and match perfectly.'
-    },
-    {
-      title: 'Natural Hair Masks for Different Hair Types',
-      category: 'Hair Care',
-      imageUrl: '/Images/Hair care.jpg',
-      date: 'April 25, 2025',
-      excerpt: 'Discover DIY hair masks using kitchen staples that target specific hair concerns and types.'
-    },
-    {
-      title: 'Understanding Skin Barrier Function',
-      category: 'Skin Care',
-      imageUrl: '/Images/skincare.jpg',
-      date: 'April 22, 2025',
-      excerpt: 'The science behind a healthy skin barrier and how to repair and maintain it for radiant skin.'
-    }
-  ];
+  
 
   const getAnimationSettings = (): AnimationSettings => {
     if (prefersReducedMotion) {
@@ -216,7 +196,7 @@ const Posts = () => {
                       variant="link" 
                       className="px-0 text-rose-600 hover:text-rose-700 font-medium flex items-center group"
                     >
-                      <span className="text-sm md:text-base">Read More</span>
+                      <Link href={`/blog/${post.slug}`} className="text-sm md:text-base">Read More</Link>
                       <motion.div
                         animate={{ 
                           x: (hoveredCard === index || prefersReducedMotion) ? 0 : isMobile ? 3 : 5 

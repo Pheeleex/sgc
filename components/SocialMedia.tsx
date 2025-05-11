@@ -9,7 +9,7 @@ const SocialMedia = () => {
         <h2 className="text-3xl font-serif font-semibold">Follow Our Journey</h2>
         <a href="#" className="flex items-center text-rose-600 hover:text-rose-700 font-medium">
           <Instagram size={20} className="mr-2" />
-          @bloomblog
+          @SoftgirlCircle
         </a>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
