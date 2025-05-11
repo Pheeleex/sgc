@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import {
-  Calendar, Clock, Heart, MessageCircle, Share2, Bookmark, Tag, ChevronLeft,
+  Calendar, Clock, Tag, ChevronLeft,
 } from 'lucide-react';
 import { featuredPosts } from '@/lib/data/blog';
 import { InteractionBar } from '@/components/InteractionBar';
-import React from 'react';
+import React, { FC } from 'react';
 
 interface PageProps {
   params: {
@@ -23,7 +23,7 @@ interface Post {
   date: string;
 }
 
-const BlogPostPage: React.FC<PageProps> = ({ params }) => {
+const BlogPostPage: FC<PageProps> = ({ params }) => {
   
   const post: Post | undefined = featuredPosts.find((p) => p.slug === params.slug);
   const currentPost: Post = post || featuredPosts[0];
