@@ -25,8 +25,10 @@ interface Post {
 
 export default async function BlogPostPage({ params }: PageProps) { 
   
-  const post: Post | undefined = featuredPosts.find((p) => p.slug === params.slug);
+  const post: Post | undefined =  featuredPosts.find((p) => p.slug === params.slug);
   const currentPost: Post = post || featuredPosts[0];
+
+ 
 
   const relatedPosts = featuredPosts
     .filter((p) => p.id !== currentPost.id)
