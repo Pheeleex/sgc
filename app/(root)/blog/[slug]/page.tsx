@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
@@ -31,7 +31,7 @@ export default async function BlogPostPage(props: PageProps) {
 
   console.log('params', params);
   console.log('post', post);
-  console.log('currentPosting', currentPost);
+  console.log('currentPostin', currentPost);
 
   if (!post) notFound(); // This triggers 404
 
