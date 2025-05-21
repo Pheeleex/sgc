@@ -1,17 +1,12 @@
+import { categories } from '@/lib/utils'
 import { ChevronRight } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 
 const FeaturedCategories = () => {
     
-  const categories = [
-    { name: 'Fashion', imageUrl: 'Images/pinteresty5.jpg', description: 'Seasonal trends and timeless classics' },
-    { name: 'Hair Care', imageUrl: '/Images/pinteresty1.jpg', description: 'Natural solutions for radiant hair' },
-    { name: 'Skin Care', imageUrl: '/Images/pinteresty10.jpg', description: 'Routines for healthy, glowing skin' },
-    { name: 'Wellness', imageUrl: '/Images/pinteresty6.jpg', description: 'Holistic approaches to self-care' }
-  ];
-
   return (
-    <section className="py-16">
+    <section className="py-16" id='Categories'>
     <div className="container mx-auto px-4">
       <h2 className="text-3xl font-serif font-semibold text-center mb-12">Explore Categories</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -28,7 +23,7 @@ const FeaturedCategories = () => {
               <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
               <p className="text-white/80 mb-4">{category.description}</p>
               <div className="flex items-center text-sm font-medium text-white group-hover:text-rose-300 transition-colors">
-                <span>View Articles</span>
+               <Link href={`/Categories/${category.name}`}> View more</Link>
                 <ChevronRight size={16} className="ml-1" />
               </div>
             </div>

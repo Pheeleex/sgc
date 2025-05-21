@@ -1,60 +1,89 @@
 'use client'
-import { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
+import { ArrowRight, Loader2 } from 'lucide-react';
+import Newsletter from './Newsletter';
+import Link from 'next/link';
 
 export default function Hero() {
   const [heroImageLoaded, setHeroImageLoaded] = useState(false);
+  const imageRef = useRef<HTMLImageElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 300], [0, 100]);
 
-  // Create a motion-enhanced Button component
-const MotionButton = motion(Button);
+  // Enhanced parallax effect with better performance
+  const yOffset = useTransform(scrollY, [0, 500], [0, -75]);
 
-  // Parallax effect for background
-  const yOffset = useTransform(scrollY, [0, 300], [0, -50]);
-  
-  // Text animation variants
+
+  // Improved text animation variants with better timing
   const textVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    }
   };
 
-  // Newsletter animation
-  const newsletterVariants = {
-    hidden: { scale: 0.95, opacity: 0 },
-    visible: { scale: 1, opacity: 1 }
-  };
 
+
+  // Proper image loading handling
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // If image is cached, it might already be loaded
+    const backgroundImg = new Image();
+    backgroundImg.src = '/Images/pinteresty11.jpg';
+
+    // Check if already cached/loaded
+    if (backgroundImg.complete) {
       setHeroImageLoaded(true);
-    }, 300);
-    return () => clearTimeout(timer);
+      return;
+    }
+
+    // Wait for image to load
+    backgroundImg.onload = () => setHeroImageLoaded(true);
+
+    return () => {
+      backgroundImg.onload = null;
+    };
   }, []);
+
+
+
 
   return (
     <div>
       <main>
-        {/* Hero Section */}
-        <section className="relative overflow-hidden">
-          <motion.div 
-            className={`w-full h-96 md:h-screen max-h-[700px] bg-cover bg-center transition-opacity duration-700 ${
-              heroImageLoaded ? 'opacity-100' : 'opacity-0'
-            }`} 
-            style={{ 
+        {/* Hero Section with improved loading and accessibility */}
+        <section className="relative overflow-hidden" aria-label="Hero banner">
+          {/* Loading state */}
+          {!heroImageLoaded && (
+            <div className="w-full h-96 md:h-[80vh] max-h-[700px] bg-rose-50 flex items-center justify-center">
+              <Loader2 className="h-12 w-12 text-rose-500 animate-spin" aria-label="Loading hero image" />
+            </div>
+          )}
+
+          {/* Background with proper loading */}
+          <motion.div
+            ref={imageRef}
+            className={`w-full h-96 md:h-[80vh] max-h-[700px] bg-cover bg-center transition-opacity duration-700 ${heroImageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+            style={{
               backgroundImage: `url('/Images/pinteresty11.jpg')`,
-              y: prefersReducedMotion ? 0 : yOffset 
+              y: prefersReducedMotion ? 0 : yOffset
             }}
-            initial={prefersReducedMotion ? false : { scale: 1.1 }}
+            initial={prefersReducedMotion ? false : { scale: 1.05 }}
             animate={prefersReducedMotion ? {} : { scale: 1 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
+            aria-hidden={!heroImageLoaded}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent flex items-center">
-              <div className="container mx-auto px-4">
-                <motion.div 
-                  className="max-w-lg md:ml-12 p-6 md:p-0"
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent flex items-center">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <motion.div
+                  className="max-w-xl md:ml-12 p-6 md:p-0"
                   initial="hidden"
                   animate={heroImageLoaded ? "visible" : "hidden"}
                   variants={prefersReducedMotion ? {} : {
@@ -62,87 +91,57 @@ const MotionButton = motion(Button);
                     visible: {
                       opacity: 1,
                       transition: {
-                        staggerChildren: 0.2,
-                        delayChildren: 0.3
+                        staggerChildren: 0.15,
+                        delayChildren: 0.2
                       }
                     }
                   }}
                 >
-                  <motion.h2 
-                    className="text-4xl md:text-5xl font-serif font-bold text-white mb-4"
+                  <motion.span
+                    className="inline-block px-3 py-1 rounded-full bg-rose-500/80 text-white text-sm font-medium mb-4"
                     variants={prefersReducedMotion ? {} : textVariants}
-                    transition={{ type: "spring", stiffness: 100 }}
+                  >
+                    Welcome to Soft Girl Aesthetics
+                  </motion.span>
+
+                  <motion.h1
+                    className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4 leading-tight"
+                    variants={prefersReducedMotion ? {} : textVariants}
                   >
                     Embrace your soft girl journey
-                  </motion.h2>
-                  <motion.p 
-                    className="text-white/90 text-lg mb-6"
+                  </motion.h1>
+
+                  <motion.p
+                    className="text-white/90 text-lg mb-8"
                     variants={prefersReducedMotion ? {} : textVariants}
-                    transition={{ type: "spring", stiffness: 100, delay: 0.2 }}
                   >
                     Explore beauty, fashion, and wellness tips that celebrate your unique style and self-expression.
                   </motion.p>
+
                   <motion.div
+                    className="flex flex-wrap gap-4"
                     variants={prefersReducedMotion ? {} : textVariants}
-                    transition={{ type: "spring", stiffness: 100, delay: 0.4 }}
                   >
-                    <MotionButton
-                      className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2 rounded-md transition-colors"
-                      whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
-                      whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
+                    <a
+                      href="#Categories"
+                      className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-md transition-colors flex items-center gap-2"
                     >
-                      Explore Now
-                    </MotionButton>
+                      Explore Now <ArrowRight className="h-4 w-4" />
+                    </a>
+
+
+                    <a href='#Posts'
+                      className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border-white/30 px-6 py-3 rounded-md transition-colors"
+                    >
+                      Latest Posts
+                    </a>
                   </motion.div>
                 </motion.div>
               </div>
             </div>
           </motion.div>
         </section>
-        
-        {/* Newsletter Section */}
-        <motion.section 
-          className="bg-rose-50 py-8"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={prefersReducedMotion ? {} : newsletterVariants}
-          transition={{ type: "spring", stiffness: 100, delay: 0.2 }}
-        >
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <motion.div 
-                className="mb-4 md:mb-0"
-                initial={prefersReducedMotion ? {} : { x: -20 }}
-                whileInView={prefersReducedMotion ? {} : { x: 0 }}
-                viewport={{ once: true }}
-              >
-                <h3 className="text-xl font-semibold text-neutral-800">Join our newsletter</h3>
-                <p className="text-neutral-600">Get the latest beauty insights delivered to your inbox</p>
-              </motion.div>
-              <motion.div 
-                className="flex w-full md:w-auto max-w-md"
-                initial={prefersReducedMotion ? {} : { x: 20 }}
-                whileInView={prefersReducedMotion ? {} : { x: 0 }}
-                viewport={{ once: true }}
-                transition={{ type: "spring", delay: 0.1 }}
-              >
-                <input 
-                  type="email" 
-                  placeholder="Your email address" 
-                  className="flex-grow px-4 py-2 rounded-l-md border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-rose-500"
-                />
-                <MotionButton
-                  className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-r-md transition-colors"
-                  whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
-                  whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                >
-                  Subscribe
-                </MotionButton>
-              </motion.div>
-            </div>
-          </div>
-        </motion.section>
+        <Newsletter />
       </main>
     </div>
   );

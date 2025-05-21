@@ -1,25 +1,13 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { allProducts } from '@/lib/utils';
 
 interface Category {
   id: string;
   label: string;
 }
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  rating: number;
-  reviewCount: number;
-  image: string;
-  category: string;
-  badge?: string;
-  sale?: boolean;
-  originalPrice?: number;
-}
 
 // Product categories
 const categories: Category[] = [
@@ -34,93 +22,7 @@ const RecommendedProducts: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
   // Sample product data - replace with your actual products
-  const allProducts: Product[] = [
-    {
-      id: 1,
-      name: "Glow Essence Serum",
-      description: "Hydrating serum with hyaluronic acid and vitamin C",
-      price: 42.99,
-      rating: 4.8,
-      reviewCount: 124,
-      image: "Images/glowserum.jpg",
-      category: "skincare",
-      badge: "Bestseller",
-    },
-    {
-      id: 2,
-      name: "Silk Repair Hair Mask",
-      description: "Deep conditioning treatment for damaged hair",
-      price: 28.5,
-      rating: 4.9,
-      reviewCount: 86,
-      image: "Images/Silk Repair Hair Mask.jpg",
-      category: "haircare",
-    },
-    {
-      id: 3,
-      name: "Dewy Skin Tint",
-      description: "Lightweight foundation for natural coverage",
-      price: 36.0,
-      rating: 4.7,
-      reviewCount: 209,
-      image: "Images/Dewy Skin Tint.jpg",
-      category: "makeup",
-      badge: "New",
-    },
-    {
-      id: 4,
-      name: "Calm Mind Wellness Tea",
-      description: "Herbal blend with lavender and chamomile",
-      price: 18.99,
-      rating: 4.6,
-      reviewCount: 72,
-      image: "Images/Calm Mind Wellness Tea.png",
-      category: "wellness",
-    },
-    {
-      id: 5,
-      name: "Barrier Repair Moisturizer",
-      description: "Ceramide-rich cream for sensitive skin",
-      price: 46.0,
-      rating: 4.9,
-      reviewCount: 158,
-      image: "Images/Barrier Repair Moisturizer.jpg",
-      category: "skincare",
-      sale: true,
-      originalPrice: 58.0,
-    },
-    {
-      id: 6,
-      name: "Volume Boost Hair Spray",
-      description: "Lightweight texturizing spray for body and shine",
-      price: 24.5,
-      rating: 4.5,
-      reviewCount: 93,
-      image: "Images/volumespary.png",
-      category: "haircare",
-    },
-    {
-      id: 7,
-      name: "Rose Quartz Facial Roller",
-      description: "Crystal facial massage tool for lymphatic drainage",
-      price: 32.0,
-      rating: 4.7,
-      reviewCount: 117,
-      image: "Images/rosequartsroller.jpg",
-      category: "wellness",
-    },
-    {
-      id: 8,
-      name: "Satin Finish Lipstick",
-      description: "Hydrating formula with long-lasting color",
-      price: 22.0,
-      rating: 4.8,
-      reviewCount: 204,
-      image: "Images/SatinLipstick.jpg",
-      category: "makeup",
-    },
-  ];
-
+ 
   const products = activeCategory === 'all' 
     ? allProducts 
     : allProducts.filter(product => product.category === activeCategory);
@@ -167,16 +69,16 @@ const RecommendedProducts: React.FC = () => {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-br from-purple-50 via-white to-pink-50">
+    <section id='RecommendedProducts' className="py-16 bg-gradient-to-br from-purple-50 via-white to-pink-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Decorative Elements */}
         <div className="absolute left-0 top-0 w-32 h-32 bg-pink-100 rounded-full opacity-20 -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute right-0 bottom-0 w-40 h-40 bg-purple-100 rounded-full opacity-30 translate-x-1/3 translate-y-1/3" />
+       
 
         {/* Section Header */}
         <div className="text-center mb-12 relative">
           <span className="text-sm font-medium text-pink-600 tracking-wider uppercase">Handpicked For You</span>
-          <h2 className="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">Recommended Products</h2>
+          <h2 className="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">Best sellers</h2>
           <div className="w-24 h-1 bg-pink-600 rounded-full mx-auto mt-4" />
           <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
             Discover our carefully curated selection of beauty and wellness products that we've tried, tested, and loved

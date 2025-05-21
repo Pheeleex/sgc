@@ -49,7 +49,7 @@ const Footer = () => {
           <h4 className="text-lg font-semibold mb-6">Contact Us</h4>
           <div className="flex items-start mb-4">
             <Mail size={20} className="text-rose-400 mr-4 mt-1 flex-shrink-0" />
-            <p className="text-neutral-400">hello@ehi.com</p>
+            <p className="text-neutral-400">Softgirlcircle@gmail.com</p>
           </div>
           <p className="text-neutral-400 mb-6">Subscribe to our newsletter for weekly beauty tips and inspiration.</p>
           <div className="flex">

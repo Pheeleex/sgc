@@ -112,7 +112,7 @@ const Posts = () => {
   };
 
   return (
-    <section className="py-12 md:py-16 bg-neutral-100 overflow-hidden">
+    <section className="py-12 md:py-16 bg-neutral-100 overflow-hidden" id='Posts'>
       <motion.div 
         className="container mx-auto px-4"
         initial="hidden"
