@@ -22,9 +22,9 @@ const RecommendedProducts: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
   // Sample product data - replace with your actual products
- 
-  const products = activeCategory === 'all' 
-    ? allProducts 
+
+  const products = activeCategory === 'all'
+    ? allProducts
     : allProducts.filter(product => product.category === activeCategory);
 
   const categoryStyles: Record<string, string> = {
@@ -39,7 +39,7 @@ const RecommendedProducts: React.FC = () => {
     const stars: React.ReactNode[] = [];
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5;
-    
+
     for (let i = 0; i < fullStars; i++) {
       stars.push(
         <svg key={`full-${i}`} xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
@@ -47,7 +47,7 @@ const RecommendedProducts: React.FC = () => {
         </svg>
       );
     }
-    
+
     if (halfStar) {
       stars.push(
         <svg key="half" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,7 +55,7 @@ const RecommendedProducts: React.FC = () => {
         </svg>
       );
     }
-    
+
     const emptyStars = 5 - stars.length;
     for (let i = 0; i < emptyStars; i++) {
       stars.push(
@@ -64,7 +64,7 @@ const RecommendedProducts: React.FC = () => {
         </svg>
       );
     }
-    
+
     return stars;
   };
 
@@ -73,7 +73,7 @@ const RecommendedProducts: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Decorative Elements */}
         <div className="absolute left-0 top-0 w-32 h-32 bg-pink-100 rounded-full opacity-20 -translate-x-1/2 -translate-y-1/2" />
-       
+
 
         {/* Section Header */}
         <div className="text-center mb-12 relative">
@@ -85,105 +85,111 @@ const RecommendedProducts: React.FC = () => {
           </p>
         </div>
 
+
+
         {/* Category Filter */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categories.map((category) => (
             <button
-            key={category.id}
-            onClick={() => setActiveCategory(category.id)}
-            className={`px-5 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
-              activeCategory === category.id
+              key={category.id}
+              onClick={() => setActiveCategory(category.id)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${activeCategory === category.id
                 ? category.id === 'all'
                   ? 'bg-gray-800 text-white'
                   : `${categoryStyles[category.id as keyof typeof categoryStyles]} text-white`
                 : 'bg-gray-200 text-gray-800'
-            }`}
-          >
-            {category.label}
-          </button>
+                }`}
+            >
+              {category.label}
+            </button>
           ))}
         </div>
 
         {/* Products grid */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-  {products.map((product) => (
-    <div
-      key={product.id}
-      className="group relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-    >
-      {/* Image Container */}
-      <div className="relative h-64 overflow-hidden rounded-t-xl">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        
-        {/* Badge */}
-        {product.badge && (
-          <span className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-sm font-medium text-pink-600 shadow-sm">
-            {product.badge}
-          </span>
-        )}
-        
-        {/* Sale Ribbon */}
-        {product.sale && (
-          <div className="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold">
-            SALE
-          </div>
-        )}
-      </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="group relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+            >
+              {/* Image Container */}
+              <div className="relative h-64 overflow-hidden rounded-t-xl">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
 
-      {/* Product Info */}
-      <div className="p-6">
-        {/* Category Tag */}
-        <span className={`${categoryStyles[product.category]} text-white px-2 py-1 rounded-full text-xs font-medium`}>
-          {product.category}
-        </span>
+                {/* Badge */}
+                {product.badge && (
+                  <span className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-sm font-medium text-pink-600 shadow-sm">
+                    {product.badge}
+                  </span>
+                )}
 
-        <h3 className="mt-3 text-lg font-semibold text-gray-900">{product.name}</h3>
-        <p className="mt-2 text-gray-600 line-clamp-2">{product.description}</p>
+                {/* Sale Ribbon */}
+                {product.sale && (
+                  <div className="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold">
+                    SALE
+                  </div>
+                )}
+              </div>
 
-        {/* Rating */}
-        <div className="mt-3 flex items-center gap-1">
-          <div className="flex">{renderStars(product.rating)}</div>
-          <span className="text-sm text-gray-500">({product.reviewCount})</span>
+              {/* Product Info */}
+              <div className="p-6">
+                {/* Category Tag */}
+                <span className={`${categoryStyles[product.category]} text-white px-2 py-1 rounded-full text-xs font-medium`}>
+                  {product.category}
+                </span>
+
+                <h3 className="mt-3 text-lg font-semibold text-gray-900">{product.name}</h3>
+                <p className="mt-2 text-gray-600 line-clamp-2">{product.description}</p>
+
+                {/* Rating */}
+                <div className="mt-3 flex items-center gap-1">
+                  <div className="flex">{renderStars(product.rating)}</div>
+                  <span className="text-sm text-gray-500">({product.reviewCount})</span>
+                </div>
+
+                {/* Price */}
+                <div className="mt-4 flex items-center gap-3">
+                  {product.sale ? (
+                    <>
+                      <span className="text-xl font-bold text-red-500">
+                        ${product.price.toFixed(2)}
+                      </span>
+                      <span className="text-gray-400 line-through">
+                        ${product.originalPrice?.toFixed(2)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-xl font-bold text-gray-900">
+                      ${product.price.toFixed(2)}
+                    </span>
+                  )}
+                </div>
+
+                {/* Add to Cart */}
+                <button className="mt-6 w-full bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg transition-colors duration-300">
+                  Add to Cart
+                </button>
+              </div>
+
+              {/* Quick View Overlay */}
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl flex items-center justify-center">
+                <button className="text-white font-medium bg-white/10 backdrop-blur-sm px-6 py-2 rounded-full hover:bg-white/20 transition-all">
+                  Quick View
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-
-        {/* Price */}
-        <div className="mt-4 flex items-center gap-3">
-          {product.sale ? (
-            <>
-              <span className="text-xl font-bold text-red-500">
-                ${product.price.toFixed(2)}
-              </span>
-              <span className="text-gray-400 line-through">
-                ${product.originalPrice?.toFixed(2)}
-              </span>
-            </>
-          ) : (
-            <span className="text-xl font-bold text-gray-900">
-              ${product.price.toFixed(2)}
-            </span>
-          )}
-        </div>
-
-        {/* Add to Cart */}
-        <button className="mt-6 w-full bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg transition-colors duration-300">
-          Add to Cart
-        </button>
       </div>
-
-      {/* Quick View Overlay */}
-      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl flex items-center justify-center">
-        <button className="text-white font-medium bg-white/10 backdrop-blur-sm px-6 py-2 rounded-full hover:bg-white/20 transition-all">
-          Quick View
-        </button>
-      </div>
-    </div>
-  ))}
-</div>
-      </div>
+              <div className="mt-12 text-center p-4">
+                <p className="text-sm text-gray-500 max-w-xl mx-auto">
+                  As part of our commitment to transparency, we want you to know that we may earn a small commission from purchases made through the links on this page. This helps support our blog at no additional cost to you.
+                </p>
+              </div>
     </section>
   );
 };

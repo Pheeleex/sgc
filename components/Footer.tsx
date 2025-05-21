@@ -52,6 +52,7 @@ const Footer = () => {
             <p className="text-neutral-400">Softgirlcircle@gmail.com</p>
           </div>
           <p className="text-neutral-400 mb-6">Subscribe to our newsletter for weekly beauty tips and inspiration.</p>
+          <p className="text-neutral-400 mb-6">As part of our commitment to transparency, we want you to know that we may earn a small commission from purchases made through the links on this page. This helps support our blog at no additional cost to you.</p>
           <div className="flex">
             <input 
               type="email" 
