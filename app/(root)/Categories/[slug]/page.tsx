@@ -3,6 +3,7 @@ import { allProducts } from '@/lib/utils';
 import { featuredPosts } from '@/lib/data/blog';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { ArrowRight, Calendar } from 'lucide-react';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -22,75 +23,115 @@ export default async function CategoryPage(props: PageProps) {
   );
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold capitalize mb-4">
-        {slug.replace(/-/g, ' ')} Category
-      </h1>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Products</h2>
-        {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white rounded-xl overflow-hidden shadow hover:shadow-md transition-shadow duration-300"
-              >
-                <div className="relative h-48 w-full">
-                  <Image
-                    src={product.image.startsWith('/') ? product.image : `/${product.image}`}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
-                  <p className="text-sm text-gray-600 line-clamp-3">{product.description}</p>
-                </div>
-              </div>
-            ))}
+      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Category Header */}
+        <div className="mb-8 px-4 sm:px-0">
+          <h1 className="text-4xl font-bold text-gray-900 capitalize mb-2 bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text">
+            {slug.replace(/-/g, ' ')}
+          </h1>
+          <div className="flex gap-2 text-sm text-gray-500">
+            <Link href="/" className="hover:text-indigo-600">Home</Link>
+            <span>/</span>
+            <span className="capitalize">{slug.replace(/-/g, ' ')}</span>
           </div>
-        ) : (
-          <p className="text-gray-500">No products found in this category.</p>
-        )}
-      </section>
+        </div>
 
-
-      <section>
-        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">Blog Posts</h2>
-        {filteredPosts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPosts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-white border rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
-              >
-                <div className="relative h-56 sm:h-64 md:h-48 lg:h-56 xl:h-64">
-                  <Image
-                    src={post.imageUrl}
-                    alt={post.title}
-                    fill
-                    className="object-cover w-full h-full"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 line-clamp-3">{post.excerpt}</p>
-                  <Link href={`/blog/${post.slug}`}>Read</Link>
-                </div>
-              </div>
-            ))}
+        {/* Products Section */}
+        <section className="mb-12 px-4 sm:px-0">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Featured Products</h2>
+            <span className="text-sm text-gray-500">{filteredProducts.length} items</span>
           </div>
-        ) : (
-          <p className="text-gray-500">No blog posts found in this category.</p>
-        )}
-      </section>
+          
+          {filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {filteredProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ease-out"
+                >
+                  <div className="relative aspect-square">
+                    <Image
+                      src={product.image.startsWith('/') ? product.image : `/${product.image}`}
+                      alt={product.name}
+                      fill
+                      className="object-cover w-full h-full"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                  <div className="p-4 sm:p-5">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{product.name}</h3>
+                    <p className="text-sm text-gray-600 line-clamp-2 mb-3">{product.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-indigo-600">${product.price}</span>
+                      <button className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No products found in this category</p>
+            </div>
+          )}
+        </section>
 
+        {/* Blog Posts Section */}
+        <section className="px-4 sm:px-0">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Related Articles</h2>
+            <span className="text-sm text-gray-500">{filteredPosts.length} posts</span>
+          </div>
+          
+          {filteredPosts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {filteredPosts.map((post) => (
+                <article
+                  key={post.id}
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ease-out"
+                >
+                  <div className="relative aspect-video">
+                    <Image
+                      src={post.imageUrl}
+                      alt={post.title}
+                      fill
+                      className="object-cover w-full h-full"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                  <div className="p-4 sm:p-5">
+                    <div className="flex items-center gap-2 text-sm text-indigo-600 mb-2">
+                      <Calendar className="w-4 h-4" />
+                      <span>{post.date}</span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{post.title}</h3>
+                    <p className="text-sm text-gray-600 line-clamp-3 mb-4">{post.excerpt}</p>
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium group"
+                    >
+                      Read More
+                      <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No blog posts found in this category</p>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 }
