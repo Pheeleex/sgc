@@ -1,0 +1,20 @@
+import { defineType, defineField } from "sanity";
+
+export const category = defineType({
+  name: "category",
+  title: "category",
+  type: "document",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Title",
+      type: "string",
+    }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      options: { source: "title", maxLength: 96 },
+    }),
+  ],
+});
