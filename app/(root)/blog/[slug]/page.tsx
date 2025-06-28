@@ -5,6 +5,7 @@ import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { client } from "../client";
+import { components } from "@/components/NewComponents";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -16,13 +17,17 @@ const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]`;
 const { projectId, dataset } = client.config();
 
 const urlFor = (source: SanityImageSource) =>
-  projectId && dataset ? imageUrlBuilder({ projectId, dataset }).image(source) : null;
+  projectId && dataset
+    ? imageUrlBuilder({ projectId, dataset }).image(source)
+    : null;
 
 export default async function PostPage(props: PageProps) {
   const params = await props.params;
- 
+
   // fetch post by slug
-  const post = await client.fetch<SanityDocument>(POST_QUERY, { slug: params.slug });
+  const post = await client.fetch<SanityDocument>(POST_QUERY, {
+    slug: params.slug,
+  });
 
   if (!post) notFound(); // 404 if post not found
 
@@ -51,9 +56,14 @@ export default async function PostPage(props: PageProps) {
 
       <div className="prose max-w-none prose-p:leading-relaxed prose-img:rounded-xl prose-img:shadow">
         <p className="text-sm text-gray-500">
-          Published: {new Date(post.publishedAt).toLocaleDateString()}
+          Published: {new Date(post._updatedAt).toLocaleDateString()}
         </p>
-        {Array.isArray(post.content) && <PortableText value={post.content} />}
+        {Array.isArray(post.content) && (
+          <PortableText
+            value={post.content}
+            components={components} // ✅ clean & reusable
+          />
+        )}
       </div>
     </main>
   );

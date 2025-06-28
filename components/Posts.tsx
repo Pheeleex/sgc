@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { urlFor } from '@/app/(root)/blog/image';
+import Blogcard from './Blogcard';
 
 type AnimationSettings = {
   cardYOffset: number;
@@ -139,6 +140,7 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <Blogcard />
           {posts.map((post, index) => (
             <motion.div
               key={index}

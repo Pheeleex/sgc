@@ -1,6 +1,7 @@
 import { sanityFetch } from "./live";
 import { BLOG_LIST_QUERY } from "@/lib/utils";
 import Posts from "@/components/Posts";
+import Blogcard from "@/components/Blogcard";
 
 ;
 
