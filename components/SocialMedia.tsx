@@ -11,38 +11,36 @@ const SocialMedia = () => {
           </h2>
           <a
             href="https://pin.it/2MpnYXYET"
-            className="flex items-center gap-2 text-rose-600 hover:text-rose-700 font-medium transition-colors duration-200"
+            className="flex items-center text-rose-600 hover:text-rose-700 font-medium"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
               viewBox="0 0 48 48"
-              className="w-8 h-8 sm:w-10 sm:h-10"
+              className="w-10 h-10"
             >
-              <linearGradient
-                id="IfhrvZkWi8LOXjspG~Pupa_XErM9A1xNUK5_gr1"
-                x1="14.899"
-                x2="33.481"
-                y1="43.815"
-                y2="7.661"
-                gradientTransform="matrix(1 0 0 -1 .108 50.317)"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0" stopColor="#f22543"></stop>
-                <stop offset=".422" stopColor="#eb2239"></stop>
-                <stop offset="1" stopColor="#e52030"></stop>
-              </linearGradient>
+              <defs>
+                <linearGradient
+                  id="pinterestGradient"
+                  x1="14.899"
+                  x2="33.481"
+                  y1="43.815"
+                  y2="7.661"
+                  gradientTransform="matrix(1 0 0 -1 .108 50.317)"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop offset="0" stopColor="#f22543" />
+                  <stop offset=".422" stopColor="#eb2239" />
+                  <stop offset="1" stopColor="#e52030" />
+                </linearGradient>
+              </defs>
+              <circle cx="24" cy="24" r="20" fill="url(#pinterestGradient)" />
               <path
-                fill="url(#IfhrvZkWi8LOXjspG~Pupa_XErM9A1xNUK5_gr1)"
-                d="M44,23.981C44.011,35.026,35.064,43.989,24.019,44S4.011,35.064,4,24.019C3.989,12.974,12.936,4.011,23.981,4	C35.026,3.989,43.989,12.936,44,23.981z"
-              ></path>
-              {/* Truncated for brevity */}
+                fill="#FFF"
+                d="M24.4 11.4c-8.6 0-13.2 5.8-13.2 12.1 0 2.9 1.6 6.6 4.1 7.7.4.2.6.1.7-.3l.6-2.3c.1-.2 0-.4-.1-.6-.8-1-1.5-2.8-1.5-4.6 0-4.4 3.3-8.7 9-8.7 4.9 0 8.4 3.3 8.4 8.1 0 5.4-2.7 9.2-6.3 9.2-2 0-3.4-1.6-3-3.6.6-2.4 1.7-4.9 1.7-6.7 0-1.5-.8-2.8-2.5-2.8-2 0-3.6 2.1-3.6 4.9 0 1.8.6 3 .6 3s-2 8.4-2.4 9.9c-.4 1.7-.3 4 .1 5.7.8.3 1.6.6 2.4.8.8-1.2 2-3.4 2.5-5.2.2-.6.7-2.6 1-3.8 1 1 2.7 1.7 4.4 1.7 5.5 0 9.9-4.9 9.9-11.9 0-6.9-5.5-12.1-12.8-12.1z"
+              />
             </svg>
-            <span className="text-sm sm:text-base">Check us out on Pinterest</span>
           </a>
         </div>
-        {/* You can add more content like an image gallery or social feed here */}
       </div>
     </section>
   );
