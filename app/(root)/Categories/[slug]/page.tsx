@@ -77,7 +77,7 @@ export default async function CategoryPage(props: PageProps) {
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500">No products found in this category</p>
+              <p className="text-gray-500">No available products in this category</p>
             </div>
           )}
         </section>

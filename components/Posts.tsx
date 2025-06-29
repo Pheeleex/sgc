@@ -255,9 +255,9 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
             whileHover={prefersReducedMotion ? {} : { scale: isMobile ? 1.03 : 1.05 }}
             whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
           >
-            <Button className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2 rounded-md transition-colors text-sm md:text-base">
+            <Link href='./blog' className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2 rounded-md transition-colors text-sm md:text-base">
               View All Articles
-            </Button>
+            </Link>
           </motion.div>
         </motion.div>
       </motion.div>

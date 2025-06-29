@@ -31,7 +31,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-10">
-            <h1 className="text-2xl font-serif font-bold text-rose-600">Soft girl circle</h1>
+            <Link href='/' className="text-2xl font-serif font-bold text-rose-600">Soft girl circle</Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">

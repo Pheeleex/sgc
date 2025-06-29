@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Soft girl corner",
+  title: "Soft girl circle",
   description: "Tap in to your feminine energy",
 };
 
