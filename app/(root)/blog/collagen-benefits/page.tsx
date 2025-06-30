@@ -28,15 +28,20 @@ export default function CollagenBenefits() {
         <section className="space-y-6 sm:space-y-8 mb-12 sm:mb-16 lg:mb-20">
           <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
             <p className="text-base sm:text-lg lg:text-xl leading-relaxed text-gray-700">
-              You're scrolling through Instagram and <em>bam</em>—another flawless
-              selfie from that friend who looks exactly the same as she did five
-              years ago. Her secret? Beyond genetics and good lighting, she might
-              be riding the <strong>collagen supplement</strong> wave.
+              Picture this: You’re scrolling through Instagram, and suddenly
+              you’re hit with yet another flawless selfie from that friend who
+              somehow looks <em>exactly</em> the same as she did five years ago.
+              What’s her secret? Well, beyond good genetics and that perfect
+              lighting, there’s a good chance she’s discovered the magic of{" "}
+              <strong>collagen supplements</strong>.
             </p>
             <p className="text-base sm:text-lg lg:text-xl leading-relaxed text-gray-700">
-              I get it—I used to roll my eyes too. But after diving into research
-              and trying it myself, I'm here to tell you: the benefits of collagen
-              supplements are actually pretty incredible.
+              I’ll be honest with you – I used to roll my eyes at the whole
+              collagen craze. Another wellness trend, right? But after diving
+              deep into the research (and yes, trying it myself), I’m here to
+              tell you that the <strong>collagen supplements benefits</strong>{" "}
+              are actually pretty incredible. And no, this isn’t just another
+              “drink this powder and look like a supermodel” story.
             </p>
           </div>
         </section>
@@ -47,13 +52,17 @@ export default function CollagenBenefits() {
           </h2>
           <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
             <p className="text-base sm:text-lg lg:text-xl leading-relaxed text-gray-700">
-              Collagen is the most abundant protein in your body. It's like
-              scaffolding for your skin, bones, joints, and more.
+              Before we jump into the good stuff, let me break it down for you.{" "}
+              <strong>Collagen</strong> is basically the scaffolding that holds
+              your body together – it’s the most abundant protein in your body,
+              making up everything from your skin to your bones. Think of it as
+              your body’s natural glue.
             </p>
             <p className="text-base sm:text-lg lg:text-xl leading-relaxed text-gray-700">
-              <strong>Collagen peptides</strong> (also called hydrolyzed collagen)
-              are broken-down bits of collagen that are easier for your body to
-              absorb.
+              <strong>Hydrolyzed collagen</strong> (also called{" "}
+              <strong>collagen peptides</strong>) is what you’ll find in most
+              supplements. It’s collagen that’s been broken down into smaller,
+              more easily absorbed pieces. Smart, right?
             </p>
           </div>
 
@@ -204,20 +213,36 @@ export default function CollagenBenefits() {
                 </thead>
                 <tbody>
                   <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="p-4 sm:p-6 text-gray-700">Skin improvements</td>
-                    <td className="p-4 sm:p-6 font-semibold text-blue-600">4–12 weeks</td>
+                    <td className="p-4 sm:p-6 text-gray-700">
+                      Skin improvements
+                    </td>
+                    <td className="p-4 sm:p-6 font-semibold text-blue-600">
+                      4–12 weeks
+                    </td>
                   </tr>
                   <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="p-4 sm:p-6 text-gray-700">Joint pain relief</td>
-                    <td className="p-4 sm:p-6 font-semibold text-blue-600">3–5 months</td>
+                    <td className="p-4 sm:p-6 text-gray-700">
+                      Joint pain relief
+                    </td>
+                    <td className="p-4 sm:p-6 font-semibold text-blue-600">
+                      3–5 months
+                    </td>
                   </tr>
                   <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="p-4 sm:p-6 text-gray-700">Hair & nail strength</td>
-                    <td className="p-4 sm:p-6 font-semibold text-blue-600">6–8 weeks</td>
+                    <td className="p-4 sm:p-6 text-gray-700">
+                      Hair & nail strength
+                    </td>
+                    <td className="p-4 sm:p-6 font-semibold text-blue-600">
+                      6–8 weeks
+                    </td>
                   </tr>
                   <tr className="hover:bg-gray-50 transition-colors">
-                    <td className="p-4 sm:p-6 text-gray-700">Muscle recovery</td>
-                    <td className="p-4 sm:p-6 font-semibold text-blue-600">2–4 weeks</td>
+                    <td className="p-4 sm:p-6 text-gray-700">
+                      Muscle recovery
+                    </td>
+                    <td className="p-4 sm:p-6 font-semibold text-blue-600">
+                      2–4 weeks
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -230,11 +255,12 @@ export default function CollagenBenefits() {
             </h3>
             <div className="space-y-4 sm:space-y-6 text-base sm:text-lg lg:text-xl">
               <p className="text-gray-700 leading-relaxed">
-                <strong className="text-pink-700">Marine collagen:</strong> Best for skin and highly
-                absorbable.
+                <strong className="text-pink-700">Marine collagen:</strong> Best
+                for skin and highly absorbable.
               </p>
               <p className="text-gray-700 leading-relaxed">
-                <strong className="text-pink-700">Bovine collagen:</strong> More affordable and versatile.
+                <strong className="text-pink-700">Bovine collagen:</strong> More
+                affordable and versatile.
               </p>
               <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-white rounded-lg border border-pink-200 shadow-sm">
                 <p className="font-bold text-pink-800 text-lg sm:text-xl">
@@ -254,21 +280,27 @@ export default function CollagenBenefits() {
                 <div className="font-bold text-lg sm:text-xl text-blue-700 mb-2">
                   Skin health
                 </div>
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-blue-900 mb-2">2.5–5g</div>
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-blue-900 mb-2">
+                  2.5–5g
+                </div>
                 <div className="text-base sm:text-lg text-blue-600">daily</div>
               </div>
               <div className="bg-white p-6 sm:p-8 rounded-xl border border-blue-200 shadow-md text-center">
                 <div className="font-bold text-lg sm:text-xl text-blue-700 mb-2">
                   Joint support
                 </div>
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-blue-900 mb-2">8–12g</div>
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-blue-900 mb-2">
+                  8–12g
+                </div>
                 <div className="text-base sm:text-lg text-blue-600">daily</div>
               </div>
               <div className="bg-white p-6 sm:p-8 rounded-xl border border-blue-200 shadow-md text-center sm:col-span-2 lg:col-span-1">
                 <div className="font-bold text-lg sm:text-xl text-blue-700 mb-2">
                   Muscle growth
                 </div>
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-blue-900 mb-2">15g</div>
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-blue-900 mb-2">
+                  15g
+                </div>
                 <div className="text-base sm:text-lg text-blue-600">daily</div>
               </div>
             </div>
@@ -344,14 +376,18 @@ export default function CollagenBenefits() {
                 <div className="text-lg sm:text-xl font-bold text-purple-700 mb-2">
                   Stay Hydrated
                 </div>
-                <div className="text-sm sm:text-base text-gray-600">Avoid too much sun</div>
+                <div className="text-sm sm:text-base text-gray-600">
+                  Avoid too much sun
+                </div>
               </div>
               <div className="bg-white p-6 sm:p-8 rounded-xl border border-purple-200 text-center shadow-md hover:shadow-lg transition-shadow sm:col-span-2 lg:col-span-1">
                 <div className="text-4xl sm:text-5xl mb-4">📅</div>
                 <div className="text-lg sm:text-xl font-bold text-purple-700 mb-2">
                   Be Consistent
                 </div>
-                <div className="text-sm sm:text-base text-gray-600">Daily use is best</div>
+                <div className="text-sm sm:text-base text-gray-600">
+                  Daily use is best
+                </div>
               </div>
             </div>
           </div>
