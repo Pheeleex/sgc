@@ -20,7 +20,7 @@ const Blogcard = () => {
       <Link href="/blog/collagen-benefits" className="block group">
         <div className="overflow-hidden bg-white border-none shadow-md transition-shadow duration-300 rounded-2xl hover:shadow-xl">
           {/* Image Section */}
-          <div className="relative h-48 w-full">
+          <div className="relative h-48 md:h-52 lg:h-56 w-full">
             <motion.div
               className="w-full h-full bg-rose-100"
               animate={{ opacity: 1 }}

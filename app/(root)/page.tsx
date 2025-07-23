@@ -11,11 +11,13 @@ import { sanityFetch } from "./blog/live";
 const page = async () => {
   const { data: posts } = await sanityFetch({ query: BLOG_LIST_QUERY });
   console.log(posts, "posts");
+  const homepagePosts = posts.slice(-2);
+
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
       <Hero />
       <FeaturedCategories />
-      <Posts posts={posts} />
+      <Posts posts={homepagePosts} />
       <Banner />
       <RecommendedProducts />
       <SocialMedia />

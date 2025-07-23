@@ -56,3 +56,69 @@ export const BLOG_LIST_QUERY = defineQuery(`*[
   "category": category->title,
   publishedAt
 } | order(publishedAt desc)`);
+
+export const SOFTNESS_TYPE_PAGE_QUERY = defineQuery(`*[_type == "softnessTypePage"][0]{
+  title,
+  intro,
+  subHeadline,
+  heroImage,
+  contentSections[]{
+    heading,
+    body,
+    image
+  },
+  outro,
+  recommendedProducts[]{
+    sectionTitle,
+    products[]{
+      name,
+      url,
+      description,
+      image
+    }
+  }
+}`);
+
+
+export const BLOG_AND_SOFTNESS_QUERY = defineQuery(`{
+  posts: *[_type == "post" && defined(slug.current)] | order(publishedAt desc){
+    _id,
+    title,
+    slug,
+    excerpt,
+    mainImage,
+    "category": category->title,
+    publishedAt
+  },
+  softnessPage: *[_type == "softnessTypePage"]{
+    title,
+    intro,
+    subHeadline,
+    heroImage,
+    contentSections[]{
+      heading,
+      body,
+      image
+    },
+    outro,
+    recommendedProducts[]{
+      sectionTitle,
+      products[]{
+        name,
+        url,
+        description,
+        image
+      }
+    }
+  }
+}`);
+
+
+
+export function formatDate(date: string) {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
