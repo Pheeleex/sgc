@@ -77,9 +77,9 @@ const RecommendedProducts: React.FC = () => {
 
         {/* Section Header */}
         <div className="text-center mb-12 relative">
-          <span className="text-sm font-medium text-pink-600 tracking-wider uppercase">Handpicked For You</span>
+          <span className="text-sm font-medium text-purple-600 tracking-wider uppercase">Handpicked For You</span>
           <h2 className="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">Best sellers</h2>
-          <div className="w-24 h-1 bg-pink-600 rounded-full mx-auto mt-4" />
+          <div className="w-24 h-1 bg-purple-600 rounded-full mx-auto mt-4" />
           <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
             Discover our carefully curated selection of beauty and wellness products that we've tried, tested, and loved
           </p>

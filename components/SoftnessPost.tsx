@@ -49,7 +49,7 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
           href={match[2]}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-rose-600 hover:text-rose-700 underline decoration-rose-300 hover:decoration-rose-500 transition-colors duration-200 font-medium active:text-rose-800"
+          className="text-purple-700 hover:text-rose-700 underline decoration-purple-300 hover:decoration-purple-500 transition-colors duration-200 font-medium active:text-Purple-800"
         >
           {match[1]}
         </a>
@@ -67,7 +67,7 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-pink-25 via-pink-50 to-rose-50 text-gray-800">
+    <main className="min-h-screen bg-white text-gray-800">
       <div className="max-w-4xl mx-auto px-3 py-6 sm:px-4 sm:py-8 lg:px-8 lg:py-12">
         
         {/* Hero Section */}
@@ -89,11 +89,11 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
 
           {/* Title + SubHeadline */}
           <header className="text-center space-y-3 sm:space-y-4 lg:space-y-6 max-w-3xl mx-auto px-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-rose-600 leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-black leading-tight">
               {post.title}
             </h1>
             {post.subHeadline && (
-              <p className="text-base sm:text-lg md:text-xl text-rose-500 font-medium leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl text-black font-medium leading-relaxed">
                 {post.subHeadline}
               </p>
             )}
@@ -103,8 +103,8 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
         {/* Intro Section */}
         {post.intro && (
           <section className="mb-8 sm:mb-12 lg:mb-16">
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-10 shadow-md sm:shadow-lg border border-rose-100">
-              <div className="prose prose-sm sm:prose-base lg:prose-lg prose-rose max-w-none leading-relaxed">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-10 shadow-md sm:shadow-lg border border-purple-50">
+              <div className="prose prose-sm sm:prose-base lg:prose-lg prose-purple max-w-none leading-relaxed">
                 <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                   {parseLinks(post.intro)}
                 </p>
@@ -119,7 +119,7 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
             {post.contentSections.map((section, index) => (
               <section
                 key={index}
-                className="flex flex-col gap-4 sm:gap-6 lg:gap-8 items-center bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg overflow-hidden p-4 sm:p-6 lg:p-10 border border-rose-100"
+                className="flex flex-col gap-4 sm:gap-6 lg:gap-8 items-center bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg overflow-hidden p-4 sm:p-6 lg:p-10 border border-purple-50"
               >
                 {/* Image - Always full width on mobile */}
                 {section.image && (
@@ -139,12 +139,12 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
                 {/* Text Content */}
                 <div className="w-full space-y-3 sm:space-y-4 lg:space-y-6">
                   {section.heading && (
-                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-rose-600 leading-tight">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-black leading-tight">
                       {section.heading}
                     </h2>
                   )}
                   {section.body && (
-                    <div className="prose prose-sm sm:prose-base lg:prose-lg prose-rose max-w-none leading-relaxed">
+                    <div className="prose prose-sm sm:prose-base lg:prose-lg prose-purple-300 max-w-none leading-relaxed">
                       <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                         {parseLinks(section.body)}
                       </p>
@@ -159,8 +159,8 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
         {/* Outro Section */}
         {post.outro && (
           <section className="mb-8 sm:mb-12 lg:mb-16">
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-10 shadow-md sm:shadow-lg border border-rose-100">
-              <div className="prose prose-sm sm:prose-base lg:prose-lg prose-rose max-w-none leading-relaxed">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-10 shadow-md sm:shadow-lg border border-purple-50">
+              <div className="prose prose-sm sm:prose-base lg:prose-lg prose-emerald max-w-none leading-relaxed">
                 <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                   {parseLinks(post.outro)}
                 </p>
@@ -172,16 +172,16 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
         {/* Affiliate Disclaimer */}
         {post.recommendedProducts && post.recommendedProducts.length > 0 && (
           <div className="mb-6 sm:mb-8 lg:mb-12">
-            <div className="bg-amber-50 border border-amber-200 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm">
+            <div className="bg-purple-50 border border-purple-200 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm">
               <div className="flex items-start space-x-2 sm:space-x-3">
                 <div className="flex-shrink-0">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                     <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xs sm:text-sm font-semibold text-amber-800 mb-1">Affiliate Disclosure</h3>
-                  <p className="text-xs sm:text-sm text-amber-700 leading-relaxed">
+                  <h3 className="text-xs sm:text-sm font-semibold text-purple-800 mb-1">Affiliate Disclosure</h3>
+                  <p className="text-xs sm:text-sm text-purple-700 leading-relaxed">
                     Please note that none of the recommended products below are owned by the author. 
                     We may earn a commission from purchases made through these links at no additional cost to you. 
                     This helps support our content creation efforts.

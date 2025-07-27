@@ -79,7 +79,7 @@ const post = await client.fetch<BlogPost>(POST_QUERY, { slug: params.slug });
 
     return (
       <main className="container mx-auto min-h-screen max-w-3xl p-8 flex flex-col gap-6">
-        <Link href="/blog" className="text-rose-600 hover:underline">
+        <Link href="/blog" className="text-black hover:underline">
           ← Back to blog
         </Link>
 
@@ -93,7 +93,7 @@ const post = await client.fetch<BlogPost>(POST_QUERY, { slug: params.slug });
           />
         )}
 
-        <h1 className="text-4xl font-bold text-justify">{post.title}</h1>
+        <h1 className="text-4xl text-black font-bold text-justify">{post.title}</h1>
 
         <div className="prose max-w-none prose-p:leading-relaxed prose-img:rounded-xl prose-img:shadow">
           <p className="text-sm text-gray-500">Published: {publishedDate}</p>

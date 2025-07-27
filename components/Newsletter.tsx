@@ -62,7 +62,7 @@ const Newsletter = () => {
         };
   return (
     <motion.section 
-    className="bg-gradient-to-b from-rose-50 to-white py-12 md:py-16"
+    className="bg-gradient-to-b from-purple-50 to-white py-12 md:py-16"
     initial="hidden"
     whileInView="visible"
     viewport={{ once: true, margin: "-100px" }}
@@ -131,7 +131,7 @@ const Newsletter = () => {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-md transition-colors flex items-center justify-center"
+                  className="bg-purple-600 hover:bg-rose-900 text-white px-6 py-3 rounded-md transition-colors flex items-center justify-center"
                 
                 >
                   {isSubmitting ? (

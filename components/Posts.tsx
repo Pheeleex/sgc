@@ -250,7 +250,7 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
                   >
                     <Button
                       variant="link"
-                      className="group px-0 text-rose-600 hover:text-rose-700 text-sm md:text-base font-medium flex items-center"
+                      className="group px-0 text-purple-700 hover:text-rose-900 text-sm md:text-base font-medium flex items-center"
                     >
                       <Link
                         href={`/blog/${post.slug.current}`}
@@ -305,7 +305,7 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
           >
             <Link
               href="./blog"
-              className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2 rounded-md transition-colors text-sm md:text-base"
+              className="bg-purple-600 hover:bg-rose-900 text-white px-6 py-2 rounded-md transition-colors text-sm md:text-base"
             >
               View All Articles
             </Link>

@@ -19,7 +19,7 @@ const Footer = async () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
-            <h3 className="text-2xl font-serif font-bold text-rose-400 mb-6">
+            <h3 className="text-2xl font-serif font-bold text-purple-100 mb-6">
               Soft girl circle
             </h3>
             <p className="text-neutral-400 mb-6">

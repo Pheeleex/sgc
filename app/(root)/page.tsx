@@ -10,7 +10,7 @@ import { sanityFetch } from "./blog/live";
 
 const page = async () => {
   const { data: posts } = await sanityFetch({ query: BLOG_LIST_QUERY });
-  console.log(posts, "posts");
+ // console.log(posts, "posts");
   const homepagePosts = posts.slice(-2);
 
   return (

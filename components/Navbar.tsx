@@ -12,7 +12,7 @@ const Navbar = async () => {
         <div className="leftside flex justify-between items-center space-x-10 p-4">
           <Link
             href="/"
-            className="text-2xl font-serif font-bold text-rose-600"
+            className="text-2xl font-serif font-bold text-purple-900"
           >
             Soft girl circle
           </Link>
