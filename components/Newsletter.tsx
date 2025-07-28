@@ -131,7 +131,7 @@ const Newsletter = () => {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-purple-600 hover:bg-rose-900 text-white px-6 py-3 rounded-md transition-colors flex items-center justify-center"
+                  className="primary-btn hover:bg-rose-900 text-white px-6 py-3 rounded-md transition-colors flex items-center justify-center"
                 
                 >
                   {isSubmitting ? (

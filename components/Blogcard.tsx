@@ -72,7 +72,7 @@ const Blogcard = () => {
             >
               <Button
                 variant="link"
-                className="group px-0 text-purple-700 hover:text-rose-700 text-sm md:text-base font-medium flex items-center"
+                className="group px-0 primary hover:text-rose-700 text-sm md:text-base font-medium flex items-center"
               >
                 <span>Read More</span>
                 <ChevronRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />

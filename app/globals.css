@@ -2,3 +2,9 @@
 @import "tw-animate-css";
 
 
+.primary{
+ @apply text-[#e25e91]
+}
+.primary-btn{
+ @apply text-[#fff] bg-[#e25e91]
+}

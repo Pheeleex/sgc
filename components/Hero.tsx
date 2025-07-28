@@ -118,7 +118,7 @@ export default function Hero() {
                   >
                     <a
                       href="#Categories"
-                      className="bg-purple-900 hover:bg-rose-800 text-white px-6 py-3 rounded-md transition-colors flex items-center gap-2"
+                      className="primary-btn text-white px-6 py-3 rounded-md transition-colors flex items-center gap-2"
                     >
                       Explore Now <ArrowRight className="h-4 w-4" />
                     </a>

@@ -49,7 +49,7 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
           href={match[2]}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-purple-700 hover:text-rose-700 underline decoration-purple-300 hover:decoration-purple-500 transition-colors duration-200 font-medium active:text-Purple-800"
+          className="primary hover:text-rose-700 underline decoration-purple-300 hover:decoration-purple-500 transition-colors duration-200 font-medium active:text-Purple-800"
         >
           {match[1]}
         </a>
@@ -69,7 +69,6 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
   return (
     <main className="min-h-screen bg-white text-gray-800">
       <div className="max-w-4xl mx-auto px-3 py-6 sm:px-4 sm:py-8 lg:px-8 lg:py-12">
-        
         {/* Hero Section */}
         <div className="mb-8 sm:mb-12 lg:mb-16 space-y-4 sm:space-y-6 lg:space-y-8">
           {/* Hero Image */}
@@ -172,16 +171,16 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
         {/* Affiliate Disclaimer */}
         {post.recommendedProducts && post.recommendedProducts.length > 0 && (
           <div className="mb-6 sm:mb-8 lg:mb-12">
-            <div className="bg-purple-50 border border-purple-200 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm">
+            <div className="bg-purple-50 border border-pink-300 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm">
               <div className="flex items-start space-x-2 sm:space-x-3">
                 <div className="flex-shrink-0">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 primary mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xs sm:text-sm font-semibold text-purple-800 mb-1">Affiliate Disclosure</h3>
-                  <p className="text-xs sm:text-sm text-purple-700 leading-relaxed">
+                  <h3 className="text-xs sm:text-sm font-semibold primary mb-1">Affiliate Disclosure</h3>
+                  <p className="text-xs sm:text-sm primary leading-relaxed">
                     Please note that none of the recommended products below are owned by the author. 
                     We may earn a commission from purchases made through these links at no additional cost to you. 
                     This helps support our content creation efforts.
