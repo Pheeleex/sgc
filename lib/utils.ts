@@ -54,8 +54,8 @@ export const BLOG_LIST_QUERY = defineQuery(`*[
   excerpt,
   mainImage,
   "category": category->title,
-  publishedAt
-} | order(publishedAt desc)`);
+  date
+} | order(date desc)`);
 
 export const SOFTNESS_TYPE_PAGE_QUERY = defineQuery(`*[_type == "softnessTypePage"][0]{
   title,
@@ -81,37 +81,33 @@ export const SOFTNESS_TYPE_PAGE_QUERY = defineQuery(`*[_type == "softnessTypePag
 
 
 export const BLOG_AND_SOFTNESS_QUERY = defineQuery(`{
-  posts: *[_type == "post" && defined(slug.current)] | order(publishedAt desc){
-    _id,
-    title,
-    slug,
-    excerpt,
-    mainImage,
-    "category": category->title,
-    publishedAt
-  },
-  softnessPage: *[_type == "softnessTypePage"]{
-    title,
-    intro,
-    subHeadline,
-    heroImage,
-    contentSections[]{
-      heading,
-      body,
-      image
+  posts: *[_type == "post" && defined(slug.current)] 
+    | order(date desc){
+      _id,
+      title,
+      slug,
+      excerpt,
+      mainImage,
+      "category": category->title,
+      date
     },
-    outro,
-    recommendedProducts[]{
-      sectionTitle,
-      products[]{
-        name,
-        url,
-        description,
-        image
-      }
+
+  softnessPage: *[_type == "softnessTypePage"] 
+    | order(date desc){
+      title,
+      intro,
+      subHeadline,
+      heroImage,
+      contentSections[]{ heading, body, image },
+      outro,
+      recommendedProducts[]{
+        sectionTitle,
+        products[]{ name, url, description, image }
+      },
+      date
     }
-  }
 }`);
+
 
 
 
