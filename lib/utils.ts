@@ -21,6 +21,8 @@ interface Product {
 }
 
 
+
+
 export const categories = [
     { name: 'fashion', imageUrl: 'Images/pinteresty5.jpg', description: 'Seasonal trends and timeless classics' },
     { name: 'haircare', imageUrl: '/Images/pinteresty1.jpg', description: 'Natural solutions for radiant hair' },
@@ -111,10 +113,26 @@ export const BLOG_AND_SOFTNESS_QUERY = defineQuery(`{
 
 
 
-export function formatDate(date: string) {
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+export function formatDate(isoDateString: string): string {
+  const date = new Date(isoDateString);
+
+  if (isNaN(date.getTime())) {
+    throw new Error(`Invalid date string: ${isoDateString}`);
+  }
+
+  const options: Intl.DateTimeFormatOptions = { 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+  };
+
+ 
+  const formatted = date.toLocaleDateString('en-US', options);
+
+
+  return formatted.replace(',', ',');
 }
+
+
+console.log(formatDate("2025-08-16T20:41:00.000Z"));
+// 👉 "August, 16 2025"

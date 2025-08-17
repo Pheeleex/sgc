@@ -14,6 +14,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { urlFor } from "@/app/(root)/blog/image";
 import Blogcard from "./Blogcard";
+import { formatDate } from "@/lib/utils";
 
 type AnimationSettings = {
   cardYOffset: number;
@@ -231,7 +232,7 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
                     {post.title}
                   </CardTitle>
                   <CardDescription className="text-neutral-400 text-xs md:text-sm">
-                    {post.date}
+                    {formatDate(post.date)}
                   </CardDescription>
                 </CardHeader>
 
