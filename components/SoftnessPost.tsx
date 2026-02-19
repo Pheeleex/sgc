@@ -1,5 +1,5 @@
 import Image from "next/image";
-
+import ReactMarkdown from "react-markdown";
 import { urlFor } from "@/app/(root)/blog/image";
 import RecommendedProducts from "./RecommendedProductsSnity";
 
@@ -15,7 +15,7 @@ type SoftnessPostProps = {
       image?: any;
     }[];
     productHeader?: string;
-     recommendedProducts?: {
+    recommendedProducts?: {
       sectionTitle: string;
       products: {
         name: string;
@@ -41,7 +41,7 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
       if (match.index > lastIndex) {
         parts.push(text.slice(lastIndex, match.index));
       }
-      
+
       // Add the link
       parts.push(
         <a
@@ -54,15 +54,15 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
           {match[1]}
         </a>
       );
-      
+
       lastIndex = linkRegex.lastIndex;
     }
-    
+
     // Add remaining text
     if (lastIndex < text.length) {
       parts.push(text.slice(lastIndex));
     }
-    
+
     return parts.length > 0 ? parts : text;
   };
 
@@ -142,13 +142,29 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
                       {section.heading}
                     </h2>
                   )}
-                  {section.body && (
-                    <div className="prose prose-sm sm:prose-base lg:prose-lg prose-purple-300 max-w-none leading-relaxed">
-                      <p className="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
-                        {parseLinks(section.body)}
-                      </p>
-                    </div>
-                  )}
+                  <ReactMarkdown
+                    children={section.body}
+                    components={{
+                      p: ({ node, ...props }) => (
+                        <p
+                          className="prose prose-sm sm:prose-base lg:prose-lg text-gray-700"
+                          {...props}
+                        />
+                      ),
+                      ul: ({ node, ...props }) => (
+                        <ul className="list-disc list-inside ml-4" {...props} />
+                      ),
+                      li: ({ node, ...props }) => (
+                        <li className="mb-2" {...props} />
+                      ),
+                      a: ({ node, ...props }) => (
+                        <a
+                          className="primary hover:text-rose-700 underline decoration-purple-300 hover:decoration-purple-500 transition-colors duration-200 font-medium active:text-Purple-800"
+                          {...props}
+                        />
+                      ),
+                    }}
+                  />
                 </div>
               </section>
             ))}
@@ -174,16 +190,27 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
             <div className="bg-purple-50 border border-pink-300 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm">
               <div className="flex items-start space-x-2 sm:space-x-3">
                 <div className="flex-shrink-0">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 primary mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                     <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5 primary mt-0.5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xs sm:text-sm font-semibold primary mb-1">Affiliate Disclosure</h3>
+                  <h3 className="text-xs sm:text-sm font-semibold primary mb-1">
+                    Affiliate Disclosure
+                  </h3>
                   <p className="text-xs sm:text-sm primary leading-relaxed">
-                    Please note that none of the recommended products below are owned by the author. 
-                    We may earn a commission from purchases made through these links at no additional cost to you. 
-                    This helps support our content creation efforts.
+                    Please note that none of the recommended products below are
+                    owned by the author. We may earn a commission from purchases
+                    made through these links at no additional cost to you. This
+                    helps support our content creation efforts.
                   </p>
                 </div>
               </div>
@@ -194,10 +221,11 @@ export default function SoftnessPost({ post }: SoftnessPostProps) {
         {/* Recommended Products */}
         {post.recommendedProducts && (
           <section>
-            <RecommendedProducts recommendedProducts={post.recommendedProducts} />
+            <RecommendedProducts
+              recommendedProducts={post.recommendedProducts}
+            />
           </section>
         )}
-
       </div>
     </main>
   );

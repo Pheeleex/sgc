@@ -9,10 +9,9 @@ import {
   User,
   Youtube,
 } from "lucide-react";
-import { auth, signIn, signOut } from "@/app/auth";
+
 
 const Footer = async () => {
-  const session = await auth();
 
   return (
     <footer className="bg-neutral-900 text-white pt-16 pb-8">
@@ -51,30 +50,6 @@ const Footer = async () => {
               >
                 <Youtube size={20} />
               </a>
-              <User />
-              {session && session?.user ? (
-                <form
-                  action={async () => {
-                    "use server";
-
-                    await signOut({ redirectTo: "/" });
-                  }}
-                >
-                  <button type="submit">
-                    <span className="max-sm:hidden">Logout</span>
-                    <LogOut className="size-6 sm:hidden text-red-500" />
-                  </button>
-                </form>
-              ) : (
-                <form
-                  action={async () => {
-                    "use server";
-                    await signIn("google");
-                  }}
-                >
-                  <button type="submit">Signin with Google</button>
-                </form>
-              )}
             </div>
           </div>
           <div>

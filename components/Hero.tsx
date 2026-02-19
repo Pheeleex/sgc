@@ -109,7 +109,8 @@ export default function Hero() {
                     className="text-white/90 text-lg mb-8"
                     variants={prefersReducedMotion ? {} : textVariants}
                   >
-                    Explore beauty, fashion, and wellness tips that celebrate your unique style and self-expression.
+                    Explore planners, guides and glow-up tools to live softly,
+                    intentionally, and with structure.
                   </motion.p>
 
                   <motion.div
