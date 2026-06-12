@@ -19,6 +19,7 @@ export interface Documents {
     title: string;
     createdAt?: any;
     description: string;
+    price?: number;
     url: string;
     slug: string;
     files?: { name: string; url: string }[];
@@ -89,7 +90,9 @@ export const getDocuments = async (): Promise<Documents[]> => {
 
 
 
-export const getDocumentBySlug = async (slug: string) => {
+export const getDocumentBySlug = async (
+  slug: string
+): Promise<Documents | null> => {
   const q = query(
     collection(db, "SGC-DOCS"),
     where("slug", "==", slug),
@@ -101,8 +104,8 @@ export const getDocumentBySlug = async (slug: string) => {
   if (snapshot.empty) return null;
 
   const docSnap = snapshot.docs[0];
-  const data = docSnap.data();
-  const files = await getFilesForDocument(data.id);
+  const data = docSnap.data() as Documents;
+  const files = await getFilesForDocument(data.id ?? docSnap.id);
 
   return {
     ...data,

@@ -14,7 +14,7 @@ const FeaturedCategories = () => {
           {categories.map((category, index) => (
             <Link
               key={index}
-              href={`/Categories/${category.name}`}
+              href={`/categories/${category.name.toLowerCase().replace(/\s+/g, "-")}`}
               className="group relative overflow-hidden rounded-lg shadow-md transition-all hover:shadow-lg block"
             >
               <div className="aspect-w-3 aspect-h-2">

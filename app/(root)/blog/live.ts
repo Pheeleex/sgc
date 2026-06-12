@@ -1,7 +1,18 @@
-import { defineLive } from "next-sanity";
 import { client } from "./client";
 
+type SanityFetchOptions = {
+  query: string;
+  params?: Record<string, unknown>;
+};
 
-export const { sanityFetch, SanityLive } = defineLive({
-  client: client.withConfig({ apiVersion: "vX" }),
-});
+export async function sanityFetch<T = unknown>({
+  query,
+  params = {},
+}: SanityFetchOptions): Promise<{ data: T }> {
+  const data = await client.fetch<T>(query, params);
+  return { data };
+}
+
+export async function SanityLive() {
+  return null;
+}

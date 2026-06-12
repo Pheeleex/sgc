@@ -1,4 +1,5 @@
 // app/layout.tsx or app/root-layout.tsx
+import "@/lib/server/ensure-webstorage";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";

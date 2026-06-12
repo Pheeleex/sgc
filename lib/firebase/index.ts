@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  apiKey: "AIzaSyDnzo5YJn81OAndgbA57gfH0Ml71ekCPNM",
   authDomain: "soft-girl-corner.firebaseapp.com",
   projectId: "soft-girl-corner",
   storageBucket: "soft-girl-corner.firebasestorage.app",

@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
-import { Button } from './ui/button';
+import { motion, useScroll, useTransform, useReducedMotion, type Variants } from 'framer-motion';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import Newsletter from './Newsletter';
 import Link from 'next/link';
@@ -17,16 +16,27 @@ export default function Hero() {
 
 
   // Improved text animation variants with better timing
-  const textVariants = {
+  const textVariants: Variants = {
     hidden: { opacity: 0, y: 15 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.5,
-        ease: "easeOut"
+        ease: "easeOut" as const
       }
     }
+  };
+
+  const heroContentVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.2,
+      },
+    },
   };
 
 
@@ -77,7 +87,7 @@ export default function Hero() {
             }}
             initial={prefersReducedMotion ? false : { scale: 1.05 }}
             animate={prefersReducedMotion ? {} : { scale: 1 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+            transition={{ duration: 1.2, ease: "easeOut" as const }}
             aria-hidden={!heroImageLoaded}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent flex items-center">
@@ -86,50 +96,42 @@ export default function Hero() {
                   className="max-w-xl md:ml-12 p-6 md:p-0"
                   initial="hidden"
                   animate={heroImageLoaded ? "visible" : "hidden"}
-                  variants={prefersReducedMotion ? {} : {
-                    hidden: { opacity: 0 },
-                    visible: {
-                      opacity: 1,
-                      transition: {
-                        staggerChildren: 0.15,
-                        delayChildren: 0.2
-                      }
-                    }
-                  }}
+                  variants={prefersReducedMotion ? undefined : heroContentVariants}
                 >
                  
                   <motion.h1
                     className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4 leading-tight"
-                    variants={prefersReducedMotion ? {} : textVariants}
+                    variants={prefersReducedMotion ? undefined : textVariants}
                   >
-                    Embrace your soft girl journey
+                    Build a softer life with structure, beauty, and intention
                   </motion.h1>
 
                   <motion.p
                     className="text-white/90 text-lg mb-8"
-                    variants={prefersReducedMotion ? {} : textVariants}
+                    variants={prefersReducedMotion ? undefined : textVariants}
                   >
-                    Explore planners, guides and glow-up tools to live softly,
-                    intentionally, and with structure.
+                    Read the blog, download practical guides, and discover curated
+                    essentials that support your routines and rituals.
                   </motion.p>
 
                   <motion.div
                     className="flex flex-wrap gap-4"
-                    variants={prefersReducedMotion ? {} : textVariants}
+                    variants={prefersReducedMotion ? undefined : textVariants}
                   >
-                    <a
-                      href="#Categories"
+                    <Link
+                      href="/guides"
                       className="primary-btn text-white px-6 py-3 rounded-md transition-colors flex items-center gap-2"
                     >
-                      Explore Now <ArrowRight className="h-4 w-4" />
-                    </a>
+                      Browse Guides <ArrowRight className="h-4 w-4" />
+                    </Link>
 
 
-                    <a href='#Posts'
+                    <Link
+                      href="/blog"
                       className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border-white/30 px-6 py-3 rounded-md transition-colors"
                     >
-                      Latest Posts
-                    </a>
+                      Read the Blog
+                    </Link>
                   </motion.div>
                 </motion.div>
               </div>

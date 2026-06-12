@@ -1,5 +1,4 @@
 import { urlFor } from "@/app/(root)/blog/image";
-import Link from "next/link";
 
 type RecommendedProductsProps = {
   productHeader?: string; // Add this new prop
@@ -75,9 +74,14 @@ export default function RecommendedProducts({ productHeader, recommendedProducts
                     </p>
                   )}
                   <div className="mt-3">
-                    <Link href={product.url} className="inline-flex items-center text-xs font-medium text-slate-600 bg-slate-100 px-2 py-1 rounded-full hover:bg-slate-200 transition-colors duration-200">
+                    <a
+                      href={product.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-xs font-medium text-slate-600 bg-slate-100 px-2 py-1 rounded-full hover:bg-slate-200 transition-colors duration-200"
+                    >
                       View Product →
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </li>

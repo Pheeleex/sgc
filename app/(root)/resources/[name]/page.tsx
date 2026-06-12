@@ -1,5 +1,4 @@
-import PaywallClient from "@/components/PaywallClient";
-import { getDocumentBySlug } from "@/lib/firebase/getProducts";
+import { redirect } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ name: string }>;
@@ -7,15 +6,6 @@ interface PageProps {
 }
 const page = async (props: PageProps) => {
   const params = await props.params;
-
-  const guide = await getDocumentBySlug(params.name);
-
-  console.log( "new guide=>",JSON.stringify(guide));
-  console.log("Guide:", guide);
-  return (
-    <div className="mt-20 w-full">
-      <PaywallClient guide={guide} />
-    </div>
-  );
+  redirect(`/guides/${params.name}`);
 };
 export default page;

@@ -42,8 +42,12 @@ export const components = {
     cta: ({ value }: any) => {
       return (
         <div className="bg-rose-100 p-6 my-8 rounded-xl border-l-4 border-rose-500 shadow-sm">
-          <h3 className="text-lg font-semibold mb-2">{value.heading}</h3>
-          <p className="mb-4">{value.text}</p>
+          {(value.heading || value.label) ? (
+            <h3 className="text-lg font-semibold mb-2">
+              {value.heading || value.label}
+            </h3>
+          ) : null}
+          {value.text ? <p className="mb-4">{value.text}</p> : null}
           {value.link && (
             <a
               href={value.link}

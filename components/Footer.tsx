@@ -1,14 +1,13 @@
 import React from "react";
 import { Button } from "./ui/button";
+import Link from "next/link";
 import {
   BookOpen,
   Instagram,
-  LogOut,
   Mail,
-  Twitter,
-  User,
   Youtube,
 } from "lucide-react";
+import { footerCategoryNavigation, footerQuickLinks } from "@/lib/site-navigation";
 
 
 const Footer = async () => {
@@ -27,25 +26,23 @@ const Footer = async () => {
             </p>
             <div className="flex space-x-4">
               <a
-                href="#"
+                href="https://pin.it/2MpnYXYET"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-neutral-400 hover:text-rose-400 transition-colors"
               >
                 <Instagram size={20} />
               </a>
-              <a
-                href="#"
-                className="text-neutral-400 hover:text-rose-400 transition-colors"
-              >
-                <Twitter size={20} />
-              </a>
-              <a
-                href="#"
+              <Link
+                href="/blog"
                 className="text-neutral-400 hover:text-rose-400 transition-colors"
               >
                 <BookOpen size={20} />
-              </a>
+              </Link>
               <a
-                href="#"
+                href="https://pin.it/2MpnYXYET"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-neutral-400 hover:text-rose-400 transition-colors"
               >
                 <Youtube size={20} />
@@ -55,91 +52,31 @@ const Footer = async () => {
           <div>
             <h4 className="text-lg font-semibold mb-6">Categories</h4>
             <ul className="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-rose-400 transition-colors"
-                >
-                  Fashion
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-rose-400 transition-colors"
-                >
-                  Hair Care
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-rose-400 transition-colors"
-                >
-                  Skin Care
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-rose-400 transition-colors"
-                >
-                  Wellness
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-rose-400 transition-colors"
-                >
-                  Lifestyle
-                </a>
-              </li>
+              {footerCategoryNavigation.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-neutral-400 hover:text-rose-400 transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-6">Quick Links</h4>
             <ul className="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-rose-400 transition-colors"
-                >
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-rose-400 transition-colors"
-                >
-                  Contact
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-rose-400 transition-colors"
-                >
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-rose-400 transition-colors"
-                >
-                  Terms & Conditions
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-neutral-400 hover:text-rose-400 transition-colors"
-                >
-                  Advertise With Us
-                </a>
-              </li>
+              {footerQuickLinks.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-neutral-400 hover:text-rose-400 transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
@@ -161,14 +98,19 @@ const Footer = async () => {
               the links on this page. This helps support our blog at no
               additional cost to you.
             </p>
-            <div className="flex">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="bg-neutral-800 text-white px-4 py-2 rounded-l-md border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-rose-500 flex-grow"
-              />
-              <Button className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-r-md transition-colors">
-                Join
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button
+                asChild
+                className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 transition-colors"
+              >
+                <Link href="/guides">Browse Guides</Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="border-neutral-700 bg-neutral-900 px-4 py-2 text-white hover:bg-neutral-800 hover:text-white"
+              >
+                <Link href="/blog">Read the Blog</Link>
               </Button>
             </div>
           </div>

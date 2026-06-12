@@ -1,27 +1,56 @@
-import { defineType } from "sanity";
+import { defineField, defineType } from "sanity";
 
 export const ctaType = defineType({
-  name: 'cta',
-  title: 'Call to Action',
-  type: 'object',
+  name: "cta",
+  title: "Call to Action",
+  type: "object",
   fields: [
-    {
-      name: 'text',
-      title: 'CTA Text',
-      type: 'string',
-    },
-    {
-      name: 'link',
-      title: 'Link URL',
-      type: 'url',
-    },
-    {
-      name: 'style',
-      title: 'Style (optional)',
-      type: 'string',
+    defineField({
+      name: "heading",
+      title: "Heading",
+      type: "string",
+    }),
+    defineField({
+      name: "text",
+      title: "Supporting Text",
+      type: "text",
+      rows: 3,
+    }),
+    defineField({
+      name: "label",
+      title: "Button Label",
+      type: "string",
+    }),
+    defineField({
+      name: "link",
+      title: "Link URL",
+      type: "url",
+    }),
+    defineField({
+      name: "style",
+      title: "Style",
+      type: "string",
       options: {
-        list: ['button', 'highlight', 'plain'],
+        list: [
+          { title: "Button", value: "button" },
+          { title: "Highlight", value: "highlight" },
+          { title: "Plain", value: "plain" },
+        ],
       },
-    },
+      initialValue: "button",
+    }),
   ],
+  preview: {
+    select: {
+      heading: "heading",
+      label: "label",
+      text: "text",
+    },
+    prepare({ heading, label, text }) {
+      return {
+        title: heading || label || "Call to action",
+        subtitle: text || "Linked content block",
+      };
+    },
+  },
 });

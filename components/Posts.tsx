@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, type Transition, type Variants } from "framer-motion";
 import {
   Card,
   CardContent,
@@ -13,20 +13,13 @@ import { Button } from "./ui/button";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { urlFor } from "@/app/(root)/blog/image";
-import Blogcard from "./Blogcard";
 import { formatDate } from "@/lib/utils";
 
 type AnimationSettings = {
   cardYOffset: number;
   staggerDelay: number;
   scaleEffect: number;
-  transition: {
-    duration?: number;
-    type?: string;
-    stiffness?: number;
-    damping?: number;
-    delay?: number;
-  };
+  transition: Transition;
 };
 
 // Category colors mapping
@@ -37,7 +30,15 @@ const categoryColors: Record<string, string> = {
   wellness: "bg-purple-100 text-purple-600",
 };
 
-const Posts = ({ posts = [] }: { posts: any[] }) => {
+type PostsProps = {
+  posts?: any[];
+  showViewAllArticlesButton?: boolean;
+};
+
+const Posts = ({
+  posts = [],
+  showViewAllArticlesButton = true,
+}: PostsProps) => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const prefersReducedMotion = useReducedMotion();
@@ -88,7 +89,7 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
 
   const animSettings = getAnimationSettings();
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -98,7 +99,7 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
     },
   };
 
-  const cardVariants = {
+  const cardVariants: Variants = {
     hidden: {
       y: animSettings.cardYOffset,
       opacity: 0,
@@ -110,12 +111,12 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
     },
   };
 
-  const imageVariants = {
+  const imageVariants: Variants = {
     hover: {
       scale: isMobile ? 1.05 : 1.1,
       transition: {
         duration: isMobile ? 0.3 : 0.5,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
   };
@@ -136,7 +137,7 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.1 }}
-        variants={prefersReducedMotion ? {} : containerVariants}
+        variants={prefersReducedMotion ? undefined : containerVariants}
       >
         <motion.h2
           className="text-2xl md:text-3xl font-serif font-semibold text-center mb-8 md:mb-12"
@@ -153,11 +154,10 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          <Blogcard />
           {posts.map((post, index) => (
             <motion.div
-              key={index}
-              variants={prefersReducedMotion ? {} : cardVariants}
+              key={post._id ?? index}
+              variants={prefersReducedMotion ? undefined : cardVariants}
               onHoverStart={() => !isMobile && setHoveredCard(index)}
               onHoverEnd={() => !isMobile && setHoveredCard(null)}
               onTap={() => handleCardTap(index)}
@@ -287,31 +287,33 @@ const Posts = ({ posts = [] }: { posts: any[] }) => {
           ))}
         </div>
 
-        <motion.div
-          className="flex justify-center mt-8 md:mt-10"
-          initial={
-            prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }
-          }
-          whileInView={
-            prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }
-          }
-          viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
+        {showViewAllArticlesButton ? (
           <motion.div
-            whileHover={
-              prefersReducedMotion ? {} : { scale: isMobile ? 1.03 : 1.05 }
+            className="flex justify-center mt-8 md:mt-10"
+            initial={
+              prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }
             }
-            whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
+            whileInView={
+              prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }
+            }
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.5 }}
           >
-            <Link
-              href="./blog"
-              className="primary-btn hover:bg-rose-900 text-white px-6 py-2 rounded-md transition-colors text-sm md:text-base"
+            <motion.div
+              whileHover={
+                prefersReducedMotion ? {} : { scale: isMobile ? 1.03 : 1.05 }
+              }
+              whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
             >
-              View All Articles
-            </Link>
+              <Link
+                href="/blog"
+                className="primary-btn hover:bg-rose-900 text-white px-6 py-2 rounded-md transition-colors text-sm md:text-base"
+              >
+                View All Articles
+              </Link>
+            </motion.div>
           </motion.div>
-        </motion.div>
+        ) : null}
       </motion.div>
     </section>
   );

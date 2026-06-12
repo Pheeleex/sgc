@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import { Button } from './ui/button'
 
 const Banner = () => {
@@ -10,8 +11,10 @@ const Banner = () => {
           <p className="text-lg mb-8 text-red-100">
             Skincare faves, haircare rituals, wellness habits, and little luxuries that bring softness and beauty into your every day.
           </p>
-          <Button className="bg-white text-purple-700 hover:bg-neutral-100 px-6 py-2 rounded-md transition-colors">
-            Read the Guide
+          <Button asChild className="bg-white text-purple-700 hover:bg-neutral-100 px-6 py-2 rounded-md transition-colors">
+            <Link href="/guides">
+              Browse Guides
+            </Link>
           </Button>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import "./lib/server/ensure-webstorage";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
