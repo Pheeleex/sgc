@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
+import { toPublicGuideOrder } from "@/lib/payments/orders";
 import { processGuideOrderPayment } from "@/lib/payments/process-guide-order";
+
+export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
@@ -15,7 +18,13 @@ export async function POST(request: Request) {
     const statusCode =
       result.status === "success" ? 200 : result.status === "pending" ? 202 : 409;
 
-    return NextResponse.json(result, { status: statusCode });
+    return NextResponse.json(
+      {
+        ...result,
+        order: result.order ? toPublicGuideOrder(result.order) : null,
+      },
+      { status: statusCode }
+    );
   } catch (error) {
     console.error("Paystack confirm error:", error);
 

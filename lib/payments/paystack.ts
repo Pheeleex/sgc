@@ -53,7 +53,7 @@ export function toKobo(valueInNaira: number) {
 }
 
 export function buildGuideCallbackUrl(slug: string) {
-  return `${getSiteUrl()}/guides/${slug}`;
+  return `${getSiteUrl()}/products/${slug}`;
 }
 
 export async function initializePaystackTransaction(input: {

@@ -27,7 +27,7 @@ export default function ContactPage() {
               Email
             </h2>
             <p className="mt-3 text-sm leading-6 text-neutral-600">
-              Questions about guides, resources, or partnerships can go straight
+              Questions about products, resources, or partnerships can go straight
               to our inbox.
             </p>
             <a
@@ -63,11 +63,11 @@ export default function ContactPage() {
               Next Step
             </h2>
             <p className="mt-3 text-sm leading-6 text-neutral-600">
-              Want the quickest way into the brand? Start with a guide or browse
+              Want the quickest way into the brand? Start with a product or browse
               the latest blog posts.
             </p>
             <div className="mt-5 flex flex-col gap-2 text-sm font-semibold text-rose-600">
-              <Link href="/guides">Browse guides</Link>
+              <Link href="/products">Browse products</Link>
               <Link href="/blog">Read the blog</Link>
             </div>
           </article>

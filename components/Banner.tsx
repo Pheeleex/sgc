@@ -12,8 +12,8 @@ const Banner = () => {
             Skincare faves, haircare rituals, wellness habits, and little luxuries that bring softness and beauty into your every day.
           </p>
           <Button asChild className="bg-white text-purple-700 hover:bg-neutral-100 px-6 py-2 rounded-md transition-colors">
-            <Link href="/guides">
-              Browse Guides
+            <Link href="/products">
+              Browse Products
             </Link>
           </Button>
         </div>

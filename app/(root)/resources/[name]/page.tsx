@@ -6,6 +6,6 @@ interface PageProps {
 }
 const page = async (props: PageProps) => {
   const params = await props.params;
-  redirect(`/guides/${params.name}`);
+  redirect(`/products/${params.name}`);
 };
 export default page;

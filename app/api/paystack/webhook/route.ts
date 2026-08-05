@@ -5,6 +5,8 @@ import { NextResponse } from "next/server";
 import { processGuideOrderPayment } from "@/lib/payments/process-guide-order";
 import { getRequiredEnv } from "@/lib/server/env";
 
+export const runtime = "nodejs";
+
 function isValidPaystackSignature(rawBody: string, signature: string | null) {
   if (!signature) {
     return false;

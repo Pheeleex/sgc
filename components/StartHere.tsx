@@ -12,8 +12,8 @@ const paths = [
     accent: "from-rose-100 via-white to-pink-50",
   },
   {
-    href: "/guides",
-    label: "Get a Guide",
+    href: "/products",
+    label: "Get a Product",
     title: "Download gentle systems and resources",
     description:
       "Find planners, checklists, and digital tools designed to help you build structure without losing softness.",

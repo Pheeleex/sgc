@@ -1,23 +1,11 @@
-import { notFound } from "next/navigation";
-
-import PaywallClient from "@/components/PaywallClient";
-import { getDocumentBySlug } from "@/lib/firebase/getProducts";
+import { redirect } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default async function GuideDetailPage(props: PageProps) {
+export default async function GuideDetailRedirectPage(props: PageProps) {
   const params = await props.params;
-  const guide = await getDocumentBySlug(params.slug);
 
-  if (!guide) {
-    notFound();
-  }
-
-  return (
-    <div className="w-full">
-      <PaywallClient guide={guide} />
-    </div>
-  );
+  redirect(`/products/${params.slug}`);
 }

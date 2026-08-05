@@ -16,6 +16,7 @@ import { schemaTypes } from "./soft-girl-corner/schemaTypes";
 const now = () => new Date().toISOString();
 
 export default defineConfig({
+  basePath: "/admin/studio",
   name: "default",
   title: "Soft girl corner",
   projectId: "6hxewtft",
@@ -30,7 +31,7 @@ export default defineConfig({
     templates: (previous) => [
       ...previous.filter(
         (template) =>
-          !["post", "softnessTypePage", "productRoundup"].includes(
+          !["post", "product", "softnessTypePage", "productRoundup"].includes(
             template.schemaType
           )
       ),
@@ -65,6 +66,16 @@ export default defineConfig({
           postType: "guide",
           layoutStyle: "spotlight",
           date: now(),
+        },
+      },
+      {
+        id: "product-digital",
+        title: "Digital Product",
+        icon: PackageIcon,
+        schemaType: "product",
+        value: {
+          accessType: "paid",
+          published: true,
         },
       },
       {

@@ -103,7 +103,7 @@ const Footer = async () => {
                 asChild
                 className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 transition-colors"
               >
-                <Link href="/guides">Browse Guides</Link>
+                <Link href="/products">Browse Products</Link>
               </Button>
               <Button
                 asChild
@@ -113,6 +113,12 @@ const Footer = async () => {
                 <Link href="/blog">Read the Blog</Link>
               </Button>
             </div>
+            <Link
+              href="/admin"
+              className="mt-5 inline-flex text-xs font-medium uppercase tracking-[0.18em] text-neutral-500 transition-colors hover:text-rose-400"
+            >
+              Admin
+            </Link>
           </div>
         </div>
         <div className="border-t border-neutral-800 pt-8 mt-8 text-center text-neutral-500 text-sm">

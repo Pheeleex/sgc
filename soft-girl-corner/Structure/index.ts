@@ -65,6 +65,7 @@ export const structure: StructureResolver = (S) => {
               ),
             ])
         ),
+      S.documentTypeListItem("product").title("Products").icon(PackageIcon),
       S.documentTypeListItem("category").title("Categories").icon(TagIcon),
     ]);
 };

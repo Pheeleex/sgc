@@ -110,7 +110,7 @@ export default function Hero() {
                     className="text-white/90 text-lg mb-8"
                     variants={prefersReducedMotion ? undefined : textVariants}
                   >
-                    Read the blog, download practical guides, and discover curated
+                    Read the blog, download practical products, and discover curated
                     essentials that support your routines and rituals.
                   </motion.p>
 
@@ -119,10 +119,10 @@ export default function Hero() {
                     variants={prefersReducedMotion ? undefined : textVariants}
                   >
                     <Link
-                      href="/guides"
+                      href="/products"
                       className="primary-btn text-white px-6 py-3 rounded-md transition-colors flex items-center gap-2"
                     >
-                      Browse Guides <ArrowRight className="h-4 w-4" />
+                      Browse Products <ArrowRight className="h-4 w-4" />
                     </Link>
 
 

@@ -1,7 +1,7 @@
 export const primaryNavigation = [
   { href: "/", label: "Home" },
   { href: "/blog", label: "Blog" },
-  { href: "/guides", label: "Guides" },
+  { href: "/products", label: "Products" },
   { href: "/shop", label: "Shop" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -18,7 +18,7 @@ export const footerCategoryNavigation = [
 export const footerQuickLinks = [
   { href: "/about", label: "About Us" },
   { href: "/blog", label: "Blog" },
-  { href: "/guides", label: "Guides" },
+  { href: "/products", label: "Products" },
   { href: "/shop", label: "Shop" },
   { href: "/contact", label: "Contact" },
 ] as const;

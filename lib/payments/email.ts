@@ -1,10 +1,10 @@
 import { Resend } from "resend";
 
-import { getRequiredEnv } from "@/lib/server/env";
+import { getRequiredEnv, getSiteUrl } from "@/lib/server/env";
 
 interface SendGuideFilesEmailInput {
   email: string;
-  files: { name: string; url: string }[];
+  files: { downloadUrl: string; name: string }[];
   guideTitle: string;
 }
 
@@ -38,7 +38,7 @@ export async function sendGuideFilesEmail({
           ${files
             .map(
               (file) =>
-                `<li><a href="${escapeHtml(file.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(file.name)}</a></li>`
+                `<li><a href="${escapeHtml(file.downloadUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(file.name)}</a></li>`
             )
             .join("")}
         </ul>
@@ -54,4 +54,16 @@ export async function sendGuideFilesEmail({
   }
 
   return response.data;
+}
+
+export function buildGuideFileDownloadUrl(input: {
+  fileIndex: number;
+  reference: string;
+  token: string;
+}) {
+  const params = new URLSearchParams({ token: input.token });
+
+  return `${getSiteUrl()}/api/orders/${encodeURIComponent(input.reference)}/files/${
+    input.fileIndex
+  }?${params.toString()}`;
 }

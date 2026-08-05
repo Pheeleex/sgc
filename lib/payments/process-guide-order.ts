@@ -1,6 +1,10 @@
-import { getDocumentBySlug } from "@/lib/firebase/getProducts";
-import { sendGuideFilesEmail } from "@/lib/payments/email";
-import { getGuideOrder, updateGuideOrder } from "@/lib/payments/orders";
+import { getProductBySlug } from "@/lib/data/products";
+import { buildGuideFileDownloadUrl, sendGuideFilesEmail } from "@/lib/payments/email";
+import {
+  acquireGuideOrderDeliveryLock,
+  getGuideOrder,
+  updateGuideOrder,
+} from "@/lib/payments/orders";
 import { isPaystackTerminalFailure, verifyPaystackTransaction } from "@/lib/payments/paystack";
 import type { ProcessGuideOrderResult } from "@/lib/payments/types";
 
@@ -129,10 +133,33 @@ export async function processGuideOrderPayment(
     };
   }
 
-  const guide = await getDocumentBySlug(existingOrder.guideSlug);
+  const deliveryLock = await acquireGuideOrderDeliveryLock(reference);
+
+  if (!deliveryLock.order) {
+    return {
+      status: "failed",
+      message: "We could not find an order for this payment reference.",
+      order: null,
+    };
+  }
+
+  if (!deliveryLock.acquired) {
+    return {
+      status: deliveryLock.order.deliveryStatus === "sent" ? "success" : "pending",
+      message:
+        deliveryLock.order.deliveryStatus === "sent"
+          ? "Payment confirmed and your guide email has already been sent."
+          : "Payment confirmed. Your guide delivery is already being prepared.",
+      order: deliveryLock.order,
+    };
+  }
+
+  const deliveryOrder = deliveryLock.order;
+  const guide = await getProductBySlug(deliveryOrder.guideSlug);
 
   if (!guide || !guide.files?.length) {
     const failedOrder = await updateGuideOrder(reference, {
+      deliveryStartedAt: null,
       deliveryStatus: "failed",
       lastError: "Guide files are unavailable for delivery.",
     });
@@ -146,8 +173,15 @@ export async function processGuideOrderPayment(
 
   try {
     await sendGuideFilesEmail({
-      email: existingOrder.email,
-      files: guide.files,
+      email: deliveryOrder.email,
+      files: guide.files.map((file, index) => ({
+        downloadUrl: buildGuideFileDownloadUrl({
+          fileIndex: index,
+          reference: deliveryOrder.reference,
+          token: deliveryOrder.downloadToken,
+        }),
+        name: file.name,
+      })),
       guideTitle: guide.title,
     });
   } catch (error) {
@@ -156,6 +190,7 @@ export async function processGuideOrderPayment(
     const message = formatDeliveryErrorMessage(baseMessage);
 
     const failedOrder = await updateGuideOrder(reference, {
+      deliveryStartedAt: null,
       deliveryStatus: "failed",
       lastError: message,
     });
@@ -170,6 +205,7 @@ export async function processGuideOrderPayment(
 
   const deliveredOrder = await updateGuideOrder(reference, {
     deliveredAt: new Date().toISOString(),
+    deliveryStartedAt: null,
     deliveryStatus: "sent",
     lastError: null,
   });

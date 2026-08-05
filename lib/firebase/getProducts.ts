@@ -1,17 +1,17 @@
 import {
-  addDoc, 
-  collection, 
-  doc, 
-  getDocs, 
-  limit, 
-  orderBy, 
-  query,  
-  updateDoc, 
-  where } from "firebase/firestore";
-  import { getDownloadURL, listAll, ref } from "firebase/storage";
-import { storage } from "./index";
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from ".";
 import { Timestamp } from "firebase/firestore";
+import { listGuideFiles } from "@/lib/storage/r2";
 
 export interface Documents {
     id?: string;
@@ -22,27 +22,23 @@ export interface Documents {
     price?: number;
     url: string;
     slug: string;
-    files?: { name: string; url: string }[];
+    files?: { name: string; path: string }[];
 }
 
 
 
 const getFilesForDocument = async (docId: string) => {
-  const folderRef = ref(storage, `SGC-DOCS/${docId}`);
-
   try {
-    const result = await listAll(folderRef);
-
-    const files = await Promise.all(
-      result.items.map(async (item) => ({
-        name: item.name,
-        url: await getDownloadURL(item),
-      }))
-    );
-
-    return files;
+    return listGuideFiles(docId);
   } catch (error) {
-    console.error(`No files found for ${docId}`);
+    if (
+      error instanceof Error &&
+      error.message.includes("Missing required environment variable")
+    ) {
+      throw error;
+    }
+
+    console.error(`No files found for ${docId}:`, error);
     return [];
   }
 };

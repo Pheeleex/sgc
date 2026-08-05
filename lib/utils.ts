@@ -24,10 +24,10 @@ interface Product {
 
 
 export const categories = [
-    { name: 'Lifestyle', imageUrl: 'Images/pinteresty5.jpg', description: 'The foundation of soft living: Faith, systems and intentional routines. Start your journey with planners, guides and resets' },
-    { name: 'haircare', imageUrl: '/Images/pinteresty1.jpg', description: 'Gentle haircare rituals to support your soft living journey. Explore guides, checklists and routines' },
-    { name: 'skincare', imageUrl: '/Images/pinteresty10.jpg', description: 'Intentional routines for glowing, nourished skin. Explore guides, checklists and routines' },
-    { name: 'wellness', imageUrl: '/Images/pinteresty6.jpg', description: 'Mind-body practices that restore balance and calm. Explore guides, checklists and routines' }
+    { name: 'Lifestyle', imageUrl: 'Images/pinteresty5.jpg', description: 'The foundation of soft living: Faith, systems and intentional routines. Start your journey with planners, products and resets' },
+    { name: 'haircare', imageUrl: '/Images/pinteresty1.jpg', description: 'Gentle haircare rituals to support your soft living journey. Explore products, checklists and routines' },
+    { name: 'skincare', imageUrl: '/Images/pinteresty10.jpg', description: 'Intentional routines for glowing, nourished skin. Explore products, checklists and routines' },
+    { name: 'wellness', imageUrl: '/Images/pinteresty6.jpg', description: 'Mind-body practices that restore balance and calm. Explore products, checklists and routines' }
   ];
 
 export  const allProducts: Product[] = [

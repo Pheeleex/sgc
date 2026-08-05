@@ -3,7 +3,9 @@ import { allProducts } from "@/lib/utils";
 import { featuredPosts } from "@/lib/data/blog";
 import Link from "next/link";
 import { ArrowRight, Calendar } from "lucide-react";
-import { getDocuments } from "@/lib/firebase/getProducts";
+import { getProducts } from "@/lib/data/products";
+
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -14,10 +16,10 @@ export default async function CategoryPage(props: PageProps) {
   const params = await props.params;
   const { slug } = await params;
 
-  const allDocuments = await getDocuments();
+  const digitalProducts = await getProducts();
 
-  const filteredGuides = allDocuments?.filter(
-    (guide) => guide.category.toLowerCase() === slug
+  const filteredDigitalProducts = digitalProducts?.filter(
+    (product) => product.category.toLowerCase() === slug
   );
   const filteredPosts = featuredPosts.filter(
     (post) => post.category.toLowerCase() === slug
@@ -28,7 +30,7 @@ export default async function CategoryPage(props: PageProps) {
   );
 
   const hasAnyItems =
-    (filteredGuides && filteredGuides.length > 0) ||
+    (filteredDigitalProducts && filteredDigitalProducts.length > 0) ||
     filteredPosts.length > 0 ||
     filteredProducts.length > 0;
 
@@ -54,27 +56,27 @@ export default async function CategoryPage(props: PageProps) {
           </div>
         )}
 
-        {filteredGuides && filteredGuides.length > 0 && (
+        {filteredDigitalProducts && filteredDigitalProducts.length > 0 && (
           <section className="mb-12 px-4 sm:px-0">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">
-                Guides, Planners & Documents
+                Digital Products
               </h2>
               <span className="text-sm text-gray-500">
-                {filteredGuides.length} items
+                {filteredDigitalProducts.length} items
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-              {filteredGuides.map((guide) => (
+              {filteredDigitalProducts.map((product) => (
                 <div
-                  key={guide.id}
+                  key={product.id ?? product.slug}
                   className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ease-out"
                 >
                   <div className="relative aspect-square">
                     <Image
                       src="/Images/4th.jpg"
-                      alt={guide.title}
+                      alt={product.title}
                       fill
                       className="object-cover w-full h-full"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -83,18 +85,18 @@ export default async function CategoryPage(props: PageProps) {
                   </div>
                   <div className="p-4 sm:p-5">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {guide.title}
+                      {product.title}
                     </h3>
                     <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                      {guide.description}
+                      {product.description}
                     </p>
-                    {guide.files && guide.files.length > 0 && (
+                    {product.files && product.files.length > 0 && (
                       <Link
-                        href={`/guides/${guide.slug}`}
+                        href={`/products/${product.slug}`}
                         rel="noopener noreferrer"
                         className="inline-block text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
                       >
-                        View guide
+                        View product
                       </Link>
                     )}
                   </div>
