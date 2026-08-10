@@ -1,5 +1,7 @@
 export type GuideOrderStatus = "pending" | "paid" | "failed";
 export type GuideDeliveryStatus = "pending" | "sending" | "sent" | "failed";
+export type { SupportedCurrency } from "@/lib/payments/currency";
+import type { SupportedCurrency } from "@/lib/payments/currency";
 
 export interface GuideOrderRecord {
   reference: string;
@@ -9,7 +11,7 @@ export interface GuideOrderRecord {
   guideTitle: string;
   email: string;
   amount: number;
-  currency: "NGN";
+  currency: SupportedCurrency;
   status: GuideOrderStatus;
   deliveryStatus: GuideDeliveryStatus;
   createdAt: string;

@@ -1,8 +1,8 @@
 import { getRequiredEnv, getSiteUrl } from "@/lib/server/env";
 import type { PaystackVerificationData } from "@/lib/payments/types";
+import type { SupportedCurrency } from "@/lib/payments/currency";
 
 const PAYSTACK_API_BASE_URL = "https://api.paystack.co";
-const DEFAULT_CURRENCY = "NGN";
 
 type PaystackInitializeTransactionResponse = {
   data: {
@@ -48,10 +48,6 @@ export function generatePaystackReference() {
   return `sgc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-export function toKobo(valueInNaira: number) {
-  return Math.round(valueInNaira * 100);
-}
-
 export function buildGuideCallbackUrl(slug: string) {
   return `${getSiteUrl()}/products/${slug}`;
 }
@@ -59,6 +55,7 @@ export function buildGuideCallbackUrl(slug: string) {
 export async function initializePaystackTransaction(input: {
   amount: number;
   callbackUrl: string;
+  currency: SupportedCurrency;
   email: string;
   metadata?: Record<string, unknown>;
   reference: string;
@@ -70,7 +67,7 @@ export async function initializePaystackTransaction(input: {
       body: JSON.stringify({
         amount: String(input.amount),
         callback_url: input.callbackUrl,
-        currency: DEFAULT_CURRENCY,
+        currency: input.currency,
         email: input.email,
         metadata: input.metadata,
         reference: input.reference,

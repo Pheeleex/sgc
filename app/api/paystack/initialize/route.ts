@@ -12,8 +12,12 @@ import {
   buildGuideCallbackUrl,
   generatePaystackReference,
   initializePaystackTransaction,
-  toKobo,
 } from "@/lib/payments/paystack";
+import {
+  DEFAULT_PRODUCT_CURRENCY,
+  normalizeSupportedCurrency,
+  toCurrencySubunit,
+} from "@/lib/payments/currency";
 import { processGuideOrderPayment } from "@/lib/payments/process-guide-order";
 import {
   checkRateLimit,
@@ -23,7 +27,7 @@ import {
 
 export const runtime = "nodejs";
 
-const DEFAULT_GUIDE_PRICE = 3500;
+const DEFAULT_PRODUCT_PRICE = 9.99;
 const CHECKOUT_RATE_LIMIT = {
   limit: 10,
   windowMs: 10 * 60 * 1000,
@@ -89,12 +93,13 @@ export async function POST(request: Request) {
     }
 
     const reference = generatePaystackReference();
-    const amountInKobo = toKobo(guide.price ?? DEFAULT_GUIDE_PRICE);
+    const currency = normalizeSupportedCurrency(guide.currency, DEFAULT_PRODUCT_CURRENCY);
+    const amountInSubunit = toCurrencySubunit(guide.price ?? DEFAULT_PRODUCT_PRICE);
     const purchaseKey = buildGuidePurchaseKey(email, guide.slug);
 
     const reservation = await reserveGuideOrderPurchase({
-      amount: amountInKobo,
-      currency: "NGN",
+      amount: amountInSubunit,
+      currency,
       deliveryStatus: "pending",
       downloadToken: crypto.randomBytes(24).toString("hex"),
       email,
@@ -150,11 +155,13 @@ export async function POST(request: Request) {
 
     try {
       initializedTransaction = await initializePaystackTransaction({
-        amount: amountInKobo,
+        amount: amountInSubunit,
         callbackUrl: buildGuideCallbackUrl(guide.slug),
+        currency,
         email,
         metadata: {
           guideSlug: guide.slug,
+          currency,
           productSlug: guide.slug,
           orderReference: reference,
           custom_fields: [

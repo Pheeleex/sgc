@@ -18,6 +18,7 @@ export interface Documents {
     category: string;
     title: string;
     createdAt?: any;
+    currency?: string;
     description: string;
     price?: number;
     url: string;

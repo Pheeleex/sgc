@@ -56,9 +56,36 @@ export const product = defineType({
       name: "price",
       title: "Price",
       type: "number",
-      description: "Use Nigerian naira. Leave empty for free products.",
+      description:
+        "Enter the product price in the selected currency. Leave empty for free products.",
       hidden: ({ parent }) => parent?.accessType === "free",
       validation: (Rule) => Rule.min(0),
+    }),
+    defineField({
+      name: "currency",
+      title: "Currency",
+      type: "string",
+      description: "USD is the default for new paid products.",
+      hidden: ({ parent }) => parent?.accessType === "free",
+      initialValue: "USD",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "US dollar", value: "USD" },
+          { title: "Nigerian naira", value: "NGN" },
+        ],
+      },
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const accessType = (context.parent as { accessType?: string } | undefined)
+            ?.accessType;
+
+          if (accessType === "free") {
+            return true;
+          }
+
+          return value ? true : "Choose a currency for paid products.";
+        }),
     }),
     defineField({
       name: "shortDescription",
@@ -129,14 +156,18 @@ export const product = defineType({
   preview: {
     select: {
       accessType: "accessType",
+      currency: "currency",
       media: "coverImage",
       price: "price",
       title: "title",
     },
-    prepare({ accessType, media, price, title }) {
+    prepare({ accessType, currency, media, price, title }) {
       return {
         media,
-        subtitle: accessType === "free" ? "Free product" : `Paid product - NGN ${price ?? 0}`,
+        subtitle:
+          accessType === "free"
+            ? "Free product"
+            : `Paid product - ${currency ?? "USD"} ${price ?? 0}`,
         title,
       };
     },

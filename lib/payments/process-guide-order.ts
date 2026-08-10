@@ -71,7 +71,7 @@ export async function processGuideOrderPayment(
     };
   }
 
-  if (transaction.currency !== existingOrder.currency) {
+  if (transaction.currency.toUpperCase() !== existingOrder.currency) {
     const failedOrder = await updateGuideOrder(reference, {
       lastError: "Paystack currency mismatch.",
       status: "failed",

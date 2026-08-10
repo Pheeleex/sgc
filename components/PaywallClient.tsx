@@ -17,6 +17,11 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Product } from "@/lib/data/products";
+import {
+  DEFAULT_PRODUCT_CURRENCY,
+  formatCurrency,
+  normalizeSupportedCurrency,
+} from "@/lib/payments/currency";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
 
@@ -47,14 +52,7 @@ type InitializePaymentResponse = {
   status?: "already_purchased" | "checkout" | "failed" | "pending";
 };
 
-const defaultGuidePrice = 3500;
-
-const formatNaira = (value: number) =>
-  new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-    maximumFractionDigits: 0,
-  }).format(value);
+const defaultGuidePrice = 9.99;
 
 export default function PaywallClient({ guide }: PaywallClientProps) {
   const [phase, setPhase] = useState<CheckoutPhase>("checkout");
@@ -74,8 +72,12 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
   const hasDeliverableFiles = (guide.files?.length ?? 0) > 0;
   const previewFiles = (guide.files ?? []) as GuideFilePreview[];
   const isFreeProduct = guide.accessType === "free" || guide.price === 0;
+  const guideCurrency = normalizeSupportedCurrency(
+    guide.currency,
+    DEFAULT_PRODUCT_CURRENCY
+  );
   const guidePrice = isFreeProduct ? 0 : guide.price ?? defaultGuidePrice;
-  const formattedPrice = formatNaira(guidePrice);
+  const formattedPrice = formatCurrency(guidePrice, guideCurrency);
   const categoryLabel = guide.category
     ? guide.category.replace(/[-_]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())
     : "Digital Product";
@@ -436,7 +438,7 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
                 </div>
               </div>
 
-              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {/* <div className="mt-6 grid gap-3 sm:grid-cols-3">
                 {[
                   {
                     icon: Sparkles,
@@ -473,7 +475,7 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
                     </p>
                   </div>
                 ))}
-              </div>
+              </div> */}
 
               {hasBodyContent ? (
                 <div className="mt-10 text-[#5f4851]">

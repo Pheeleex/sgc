@@ -9,6 +9,12 @@ import {
   type Documents as LegacyDocument,
 } from "@/lib/firebase/getProducts";
 import { listGuideFiles } from "@/lib/storage/r2";
+import {
+  DEFAULT_PRODUCT_CURRENCY,
+  LEGACY_PRODUCT_CURRENCY,
+  normalizeSupportedCurrency,
+  type SupportedCurrency,
+} from "@/lib/payments/currency";
 
 export type ProductAccessType = "free" | "paid";
 
@@ -17,6 +23,7 @@ export interface Product {
   body?: TypedObject[];
   category: string;
   createdAt?: string | null;
+  currency: SupportedCurrency;
   description: string;
   fileFolderId?: string;
   files?: { name: string; path: string }[];
@@ -35,6 +42,7 @@ type SanityProduct = {
   body?: TypedObject[];
   category?: string;
   coverImageUrl?: string;
+  currency?: string;
   fileFolderId?: string;
   gallery?: { alt?: string; url?: string }[];
   price?: number;
@@ -58,6 +66,7 @@ const PRODUCT_FIELDS = `{
   },
   category,
   "coverImageUrl": coverImage.asset->url,
+  currency,
   fileFolderId,
   "gallery": gallery[]{
     alt,
@@ -114,6 +123,7 @@ function normalizeSanityProduct(product: SanityProduct | null): Product | null {
     body: product.body ?? [],
     category: product.category ?? "digital",
     createdAt: product._createdAt ?? null,
+    currency: normalizeSupportedCurrency(product.currency, DEFAULT_PRODUCT_CURRENCY),
     description: product.shortDescription,
     fileFolderId: product.fileFolderId,
     gallery:
@@ -139,6 +149,7 @@ function normalizeLegacyProduct(product: LegacyDocument): Product {
       typeof product.createdAt === "string" || product.createdAt === null
         ? product.createdAt
         : null,
+    currency: LEGACY_PRODUCT_CURRENCY,
     description: product.description,
     files: product.files ?? [],
     id: product.id,
