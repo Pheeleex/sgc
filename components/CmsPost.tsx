@@ -1,12 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
-import { PortableText } from "next-sanity";
 import { CalendarDays, ChevronLeft, Tag } from "lucide-react";
 import type { TypedObject } from "sanity";
 
 import { urlFor } from "@/app/(root)/blog/image";
-import { components as portableTextComponents } from "@/components/NewComponents";
+import RichText from "@/components/RichText";
 import RecommendedProducts from "@/components/RecommendedProductsSnity";
 
 type ProductSection = {
@@ -86,7 +85,7 @@ const layoutTokens = {
     shell: "mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:py-14",
     headerCard: "",
     sectionCard: "rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8",
-    prose: "prose prose-neutral max-w-none prose-headings:font-serif prose-p:leading-8",
+    prose: "max-w-none",
   },
   editorial: {
     page: "bg-neutral-50",
@@ -95,7 +94,7 @@ const layoutTokens = {
       "rounded-[2rem] bg-white/95 p-6 shadow-xl ring-1 ring-black/5 backdrop-blur sm:p-8 lg:p-10",
     sectionCard:
       "rounded-[2rem] border border-neutral-200/80 bg-white p-6 shadow-sm sm:p-8 lg:p-10",
-    prose: "prose prose-neutral max-w-none prose-headings:font-serif prose-p:leading-8",
+    prose: "max-w-none",
   },
   spotlight: {
     page: "bg-[#fff7f4]",
@@ -104,7 +103,7 @@ const layoutTokens = {
       "rounded-[2rem] border border-rose-100 bg-white/95 p-6 shadow-lg shadow-rose-100/60 backdrop-blur sm:p-8 lg:p-10",
     sectionCard:
       "rounded-[2rem] border border-rose-100 bg-white/95 p-6 shadow-md shadow-rose-100/40 sm:p-8 lg:p-10",
-    prose: "prose prose-neutral max-w-none prose-headings:font-serif prose-p:leading-8",
+    prose: "max-w-none",
   },
 } as const;
 
@@ -337,7 +336,7 @@ export default function CmsPost({ post }: CmsPostProps) {
 
               {Array.isArray(post.content) && post.content.length ? (
                 <div className={`${post.intro ? "mt-8" : ""} ${tokens.prose}`}>
-                  <PortableText value={post.content} components={portableTextComponents} />
+                  <RichText value={post.content} defaultImageAlt={post.title} />
                 </div>
               ) : null}
             </div>

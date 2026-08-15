@@ -32,7 +32,54 @@ const richTextContent = [
   defineArrayMember({
     type: "image",
     options: { hotspot: true },
-    fields: [defineField({ name: "alt", type: "string", title: "Alt Text" })],
+    fields: [
+      defineField({ name: "alt", type: "string", title: "Alt Text" }),
+      defineField({ name: "caption", type: "string", title: "Caption" }),
+      defineField({
+        name: "displaySize",
+        title: "Display Size",
+        type: "string",
+        initialValue: "large",
+        options: {
+          layout: "radio",
+          list: [
+            { title: "Small", value: "small" },
+            { title: "Medium", value: "medium" },
+            { title: "Large", value: "large" },
+            { title: "Full", value: "full" },
+          ],
+        },
+      }),
+      defineField({
+        name: "fit",
+        title: "Image Fit",
+        type: "string",
+        description:
+          "Contain keeps the whole image visible. Cover crops the image into a fixed frame.",
+        initialValue: "contain",
+        options: {
+          layout: "radio",
+          list: [
+            { title: "Contain", value: "contain" },
+            { title: "Cover", value: "cover" },
+          ],
+        },
+      }),
+      defineField({
+        name: "alignment",
+        title: "Alignment",
+        type: "string",
+        initialValue: "center",
+        options: {
+          layout: "radio",
+          list: [
+            { title: "Left", value: "left" },
+            { title: "Center", value: "center" },
+            { title: "Right", value: "right" },
+          ],
+        },
+      }),
+    ],
   }),
   defineArrayMember({ type: "cta" }),
 ];

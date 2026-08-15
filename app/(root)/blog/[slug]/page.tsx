@@ -2,11 +2,10 @@ import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortableText } from "next-sanity";
 import type { TypedObject } from "sanity";
 
 import CmsPost from "@/components/CmsPost";
-import { components } from "@/components/NewComponents";
+import RichText from "@/components/RichText";
 import { client } from "../client";
 
 interface PageProps {
@@ -110,11 +109,11 @@ export default async function PostPage(props: PageProps) {
 
         <h1 className="text-4xl font-bold text-black text-justify">{post.title}</h1>
 
-        <div className="prose max-w-none prose-img:rounded-xl prose-img:shadow prose-p:leading-relaxed">
+        <div>
           <p className="text-sm text-gray-500">Published: {publishedDate}</p>
 
           {Array.isArray(post.content) ? (
-            <PortableText value={post.content} components={components} />
+            <RichText className="mt-6" value={post.content} defaultImageAlt={post.title} />
           ) : null}
         </div>
       </main>

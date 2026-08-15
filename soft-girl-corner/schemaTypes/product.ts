@@ -1,6 +1,63 @@
 import { PackageIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 
+const richTextImageFields = [
+  defineField({
+    name: "alt",
+    title: "Alt Text",
+    type: "string",
+  }),
+  defineField({
+    name: "caption",
+    title: "Caption",
+    type: "string",
+  }),
+  defineField({
+    name: "displaySize",
+    title: "Display Size",
+    type: "string",
+    initialValue: "large",
+    options: {
+      layout: "radio",
+      list: [
+        { title: "Small", value: "small" },
+        { title: "Medium", value: "medium" },
+        { title: "Large", value: "large" },
+        { title: "Full", value: "full" },
+      ],
+    },
+  }),
+  defineField({
+    name: "fit",
+    title: "Image Fit",
+    type: "string",
+    description:
+      "Contain keeps the whole image visible. Cover crops the image into a fixed frame.",
+    initialValue: "contain",
+    options: {
+      layout: "radio",
+      list: [
+        { title: "Contain", value: "contain" },
+        { title: "Cover", value: "cover" },
+      ],
+    },
+  }),
+  defineField({
+    name: "alignment",
+    title: "Alignment",
+    type: "string",
+    initialValue: "center",
+    options: {
+      layout: "radio",
+      list: [
+        { title: "Left", value: "left" },
+        { title: "Center", value: "center" },
+        { title: "Right", value: "right" },
+      ],
+    },
+  }),
+];
+
 export const product = defineType({
   name: "product",
   title: "Product",
@@ -110,13 +167,7 @@ export const product = defineType({
         {
           type: "image",
           options: { hotspot: true },
-          fields: [
-            {
-              name: "alt",
-              title: "Alt Text",
-              type: "string",
-            },
-          ],
+          fields: richTextImageFields,
         },
       ],
     }),

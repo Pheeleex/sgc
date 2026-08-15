@@ -1,6 +1,7 @@
 import "server-only";
 
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
@@ -138,4 +139,19 @@ export async function uploadGuideFile(input: {
     name: safeFileName,
     path: key,
   };
+}
+
+export async function deleteGuideFile(input: { docId: string; path: string }) {
+  const prefix = getGuideFilePrefix(input.docId);
+
+  if (!input.path.startsWith(prefix) || input.path.endsWith("/")) {
+    throw new Error("That file does not belong to the selected product folder.");
+  }
+
+  await getR2Client().send(
+    new DeleteObjectCommand({
+      Bucket: getR2BucketName(),
+      Key: input.path,
+    })
+  );
 }

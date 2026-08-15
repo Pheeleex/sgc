@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { PortableText } from "next-sanity";
 import {
   ArrowRight,
   Check,
@@ -17,6 +16,7 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Product } from "@/lib/data/products";
+import RichText from "@/components/RichText";
 import {
   DEFAULT_PRODUCT_CURRENCY,
   formatCurrency,
@@ -478,62 +478,11 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
               </div> */}
 
               {hasBodyContent ? (
-                <div className="mt-10 text-[#5f4851]">
-                  <div className="space-y-5 text-base leading-8">
-                    <PortableText
-                      value={guide.body ?? []}
-                      components={{
-                        block: {
-                          h2: ({ children }) => (
-                            <h2 className="pt-3 font-serif text-3xl leading-tight text-[#3d2630]">
-                              {children}
-                            </h2>
-                          ),
-                          h3: ({ children }) => (
-                            <h3 className="pt-2 text-xl font-semibold text-[#3d2630]">
-                              {children}
-                            </h3>
-                          ),
-                          normal: ({ children }) => (
-                            <p className="text-base leading-8 text-[#6f5560]">
-                              {children}
-                            </p>
-                          ),
-                        },
-                        list: {
-                          bullet: ({ children }) => (
-                            <ul className="space-y-2 pl-5 text-base leading-7 text-[#6f5560]">
-                              {children}
-                            </ul>
-                          ),
-                          number: ({ children }) => (
-                            <ol className="space-y-2 pl-5 text-base leading-7 text-[#6f5560]">
-                              {children}
-                            </ol>
-                          ),
-                        },
-                        listItem: {
-                          bullet: ({ children }) => (
-                            <li className="list-disc marker:text-[#b15b73]">{children}</li>
-                          ),
-                          number: ({ children }) => (
-                            <li className="list-decimal marker:text-[#b15b73]">{children}</li>
-                          ),
-                        },
-                        types: {
-                          image: ({ value }) =>
-                            value?.url ? (
-                              <img
-                                alt={value.alt ?? guide.title}
-                                className="w-full rounded-2xl border border-[#f1dde2] object-cover"
-                                src={value.url}
-                              />
-                            ) : null,
-                        },
-                      }}
-                    />
-                  </div>
-                </div>
+                <RichText
+                  className="mt-10"
+                  value={guide.body ?? []}
+                  defaultImageAlt={guide.title}
+                />
               ) : null}
             <div className="mt-8 rounded-[1rem] border border-[#ecd5dc] bg-white p-5 sm:p-6">
               {phase === "checkout" ? (
