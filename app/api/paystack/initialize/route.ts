@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import { getProductBySlug } from "@/lib/data/products";
 import {
   buildGuidePurchaseKey,
+  getGuideOrderByPurchaseKey,
   reserveGuideOrderPurchase,
   toPublicGuideOrder,
   updateGuideOrder,
@@ -14,11 +15,10 @@ import {
   initializePaystackTransaction,
 } from "@/lib/payments/paystack";
 import {
-  DEFAULT_PRODUCT_CURRENCY,
-  normalizeSupportedCurrency,
-  toCurrencySubunit,
-} from "@/lib/payments/currency";
+  getPaymentQuote,
+} from "@/lib/payments/quote";
 import { processGuideOrderPayment } from "@/lib/payments/process-guide-order";
+import type { GuideOrderRecord } from "@/lib/payments/types";
 import {
   checkRateLimit,
   getClientIp,
@@ -27,7 +27,6 @@ import {
 
 export const runtime = "nodejs";
 
-const DEFAULT_PRODUCT_PRICE = 9.99;
 const CHECKOUT_RATE_LIMIT = {
   limit: 10,
   windowMs: 10 * 60 * 1000,
@@ -35,6 +34,56 @@ const CHECKOUT_RATE_LIMIT = {
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+async function existingCheckoutResponse(
+  order: GuideOrderRecord,
+  expectedListAmountMinor: number | undefined,
+  expectedChargeAmountKobo: number | undefined
+) {
+  if (order.status === "paid" || order.deliveryStatus === "sent") {
+    const result = await processGuideOrderPayment(order.reference);
+    const statusCode = result.status === "success" ? 200 : result.status === "pending" ? 202 : 409;
+    return NextResponse.json(
+      {
+        message: result.message,
+        order: result.order ? toPublicGuideOrder(result.order) : null,
+        reference: order.reference,
+        status: result.status === "success" ? "already_purchased" : result.status,
+      },
+      { status: statusCode }
+    );
+  }
+
+  if (order.status !== "pending" || !order.paystackAccessCode) return null;
+
+  if (order.currency !== "NGN" || !order.quote) {
+    return NextResponse.json(
+      { error: "An earlier checkout is still open. Please contact support to restart it." },
+      { status: 409 }
+    );
+  }
+
+  if (
+    expectedListAmountMinor !== order.quote.listAmountMinor ||
+    expectedChargeAmountKobo !== order.quote.chargeAmountKobo
+  ) {
+    return NextResponse.json(
+      {
+        error: "Your earlier checkout has a different NGN amount. Review it before proceeding.",
+        quote: order.quote,
+        status: "quote_changed",
+      },
+      { status: 409 }
+    );
+  }
+
+  return NextResponse.json({
+    accessCode: order.paystackAccessCode,
+    reference: order.reference,
+    reusedCheckout: true,
+    status: "checkout",
+  });
 }
 
 export async function POST(request: Request) {
@@ -56,6 +105,8 @@ export async function POST(request: Request) {
       email?: string;
       guideSlug?: string;
       productSlug?: string;
+      expectedListAmountMinor?: number;
+      expectedChargeAmountKobo?: number;
     };
 
     const email = body.email?.trim().toLowerCase();
@@ -92,10 +143,35 @@ export async function POST(request: Request) {
       );
     }
 
-    const reference = generatePaystackReference();
-    const currency = normalizeSupportedCurrency(guide.currency, DEFAULT_PRODUCT_CURRENCY);
-    const amountInSubunit = toCurrencySubunit(guide.price ?? DEFAULT_PRODUCT_PRICE);
     const purchaseKey = buildGuidePurchaseKey(email, guide.slug);
+    const existingOrder = await getGuideOrderByPurchaseKey(purchaseKey);
+    if (existingOrder && existingOrder.guideSlug === guide.slug && existingOrder.email === email) {
+      const response = await existingCheckoutResponse(
+        existingOrder,
+        body.expectedListAmountMinor,
+        body.expectedChargeAmountKobo
+      );
+      if (response) return response;
+    }
+
+    const quote = await getPaymentQuote(guide);
+    if (
+      body.expectedListAmountMinor !== quote.listAmountMinor ||
+      body.expectedChargeAmountKobo !== quote.chargeAmountKobo
+    ) {
+      return NextResponse.json(
+        {
+          error: "The checkout amount changed. Please review the updated amount and proceed again.",
+          quote,
+          status: "quote_changed",
+        },
+        { status: 409 }
+      );
+    }
+
+    const reference = generatePaystackReference();
+    const currency = "NGN";
+    const amountInSubunit = quote.chargeAmountKobo;
 
     const reservation = await reserveGuideOrderPurchase({
       amount: amountInSubunit,
@@ -106,39 +182,19 @@ export async function POST(request: Request) {
       guideId: guide.id ?? guide.slug,
       guideSlug: guide.slug,
       guideTitle: guide.title,
+      quote,
       purchaseKey,
       reference,
       status: "pending",
     });
 
     if (!reservation.created) {
-      if (reservation.order.status === "paid" || reservation.order.deliveryStatus === "sent") {
-        const result = await processGuideOrderPayment(reservation.order.reference);
-        const statusCode =
-          result.status === "success" ? 200 : result.status === "pending" ? 202 : 409;
-
-        return NextResponse.json(
-          {
-            message:
-              result.message ??
-              "You already purchased this product. We’re sending your access again.",
-            order: result.order ? toPublicGuideOrder(result.order) : null,
-            reference: reservation.order.reference,
-            status: result.status === "success" ? "already_purchased" : result.status,
-          },
-          { status: statusCode }
-        );
-      }
-
-      if (reservation.order.paystackAccessCode) {
-        return NextResponse.json({
-          accessCode: reservation.order.paystackAccessCode,
-          message: "We found your recent checkout and reopened it instead of creating a new one.",
-          reference: reservation.order.reference,
-          reusedCheckout: true,
-          status: "checkout",
-        });
-      }
+      const response = await existingCheckoutResponse(
+        reservation.order,
+        body.expectedListAmountMinor,
+        body.expectedChargeAmountKobo
+      );
+      if (response) return response;
 
       return NextResponse.json(
         {
@@ -162,6 +218,8 @@ export async function POST(request: Request) {
         metadata: {
           guideSlug: guide.slug,
           currency,
+          listPriceCurrency: quote.kind === "usd" ? "USD" : "NGN",
+          listPriceMinor: quote.listAmountMinor,
           productSlug: guide.slug,
           orderReference: reference,
           custom_fields: [

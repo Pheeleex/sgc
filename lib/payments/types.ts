@@ -3,6 +3,17 @@ export type GuideDeliveryStatus = "pending" | "sending" | "sent" | "failed";
 export type { SupportedCurrency } from "@/lib/payments/currency";
 import type { SupportedCurrency } from "@/lib/payments/currency";
 
+export type PaymentQuote =
+  | { kind: "ngn"; listAmountMinor: number; chargeAmountKobo: number }
+  | {
+      kind: "usd";
+      listAmountMinor: number;
+      chargeAmountKobo: number;
+      ngnPerUsd: number;
+      rateUpdatedAt: string;
+      rateFetchedAt: string;
+    };
+
 export interface GuideOrderRecord {
   reference: string;
   purchaseKey: string;
@@ -12,6 +23,7 @@ export interface GuideOrderRecord {
   email: string;
   amount: number;
   currency: SupportedCurrency;
+  quote?: PaymentQuote;
   status: GuideOrderStatus;
   deliveryStatus: GuideDeliveryStatus;
   createdAt: string;

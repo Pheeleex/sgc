@@ -114,15 +114,15 @@ export const product = defineType({
       title: "Price",
       type: "number",
       description:
-        "Enter the product price in the selected currency. Leave empty for free products.",
+        "Enter the list price in the selected currency. USD prices are shown on the site and converted to NGN for Paystack checkout. Leave empty for free products.",
       hidden: ({ parent }) => parent?.accessType === "free",
       validation: (Rule) => Rule.min(0),
     }),
     defineField({
       name: "currency",
-      title: "Currency",
+      title: "List Price Currency",
       type: "string",
-      description: "USD is the default for new paid products.",
+      description: "USD is the default list price. USD products are charged in NGN at the displayed checkout rate.",
       hidden: ({ parent }) => parent?.accessType === "free",
       initialValue: "USD",
       options: {

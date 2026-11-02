@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Product } from "@/lib/data/products";
+import type { PaymentQuote } from "@/lib/payments/types";
 import RichText from "@/components/RichText";
 import {
   DEFAULT_PRODUCT_CURRENCY,
@@ -49,7 +50,8 @@ type InitializePaymentResponse = {
   order?: ConfirmPaymentResponse["order"];
   reference?: string;
   reusedCheckout?: boolean;
-  status?: "already_purchased" | "checkout" | "failed" | "pending";
+  quote?: PaymentQuote;
+  status?: "already_purchased" | "checkout" | "failed" | "pending" | "quote_changed";
 };
 
 const defaultGuidePrice = 9.99;
@@ -63,9 +65,14 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
     "We’ll deliver your product as soon as Paystack confirms the payment."
   );
   const [generalError, setGeneralError] = useState<string>("");
+  const [quote, setQuote] = useState<PaymentQuote | null>(null);
+  const [quoteError, setQuoteError] = useState("");
+  const [quoteAttempt, setQuoteAttempt] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isCheckoutVisible, setIsCheckoutVisible] = useState(false);
   const confirmAttemptsRef = useRef(0);
+  const checkoutRef = useRef<HTMLDivElement | null>(null);
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -77,7 +84,12 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
     DEFAULT_PRODUCT_CURRENCY
   );
   const guidePrice = isFreeProduct ? 0 : guide.price ?? defaultGuidePrice;
-  const formattedPrice = formatCurrency(guidePrice, guideCurrency);
+  const displayedListCurrency = quote?.kind === "usd" ? "USD" : quote?.kind === "ngn" ? "NGN" : guideCurrency;
+  const displayedListPrice = quote ? quote.listAmountMinor / 100 : guidePrice;
+  const formattedPrice = formatCurrency(displayedListPrice, displayedListCurrency);
+  const formattedCharge = quote
+    ? formatCurrency(quote.chargeAmountKobo / 100, "NGN")
+    : "Calculating…";
   const categoryLabel = guide.category
     ? guide.category.replace(/[-_]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())
     : "Digital Product";
@@ -109,6 +121,63 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
 
   const validateEmail = (value: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+  useEffect(() => {
+    if (isFreeProduct) return;
+
+    const controller = new AbortController();
+    setQuote(null);
+    setQuoteError("");
+
+    void (async () => {
+      try {
+        const response = await fetch(
+          `/api/products/${encodeURIComponent(guide.slug)}/quote`,
+          { signal: controller.signal }
+        );
+        const payload = (await response.json()) as { error?: string; quote?: PaymentQuote };
+        if (!response.ok || !payload.quote) {
+          throw new Error(payload.error ?? "We could not calculate the checkout amount.");
+        }
+        if (!controller.signal.aborted) setQuote(payload.quote);
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setQuoteError(
+            error instanceof Error ? error.message : "We could not calculate the checkout amount."
+          );
+        }
+      }
+    })();
+
+    return () => controller.abort();
+  }, [guide.slug, isFreeProduct, quoteAttempt]);
+
+  useEffect(() => {
+    const checkoutElement = checkoutRef.current;
+    const checkoutAction = checkoutElement?.querySelector<HTMLElement>(
+      "[data-checkout-action]"
+    );
+    if (!checkoutAction) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsCheckoutVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(checkoutAction);
+
+    return () => observer.disconnect();
+  }, [phase]);
+
+  const scrollToCheckout = () => {
+    checkoutRef.current
+      ?.querySelector<HTMLElement>("[data-checkout-action]")
+      ?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+        block: "center",
+      });
+  };
 
   const clearReferenceFromUrl = () => {
     router.replace(pathname, { scroll: false });
@@ -199,6 +268,11 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
       return;
     }
 
+    if (!quote) {
+      setGeneralError("Please wait for the Paystack charge to appear before proceeding.");
+      return;
+    }
+
     setGeneralError("");
     setEmailError("");
     setIsSubmitting(true);
@@ -213,10 +287,21 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
           email: email.trim().toLowerCase(),
           guideSlug: guide.slug,
           productSlug: guide.slug,
+          expectedListAmountMinor: quote.listAmountMinor,
+          expectedChargeAmountKobo: quote.chargeAmountKobo,
         }),
       });
 
       const payload = (await response.json()) as InitializePaymentResponse;
+
+      if (payload.status === "quote_changed" && payload.quote) {
+        setQuote(payload.quote);
+        setGeneralError(
+          payload.error ?? "The checkout amount changed. Please review it and proceed again."
+        );
+        setIsSubmitting(false);
+        return;
+      }
 
       if (payload.status === "already_purchased" && payload.order) {
         setPhase("success");
@@ -303,7 +388,7 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
 
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
+      <div className="mx-auto max-w-7xl px-4 pb-32 pt-12 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.82fr)] lg:items-start">
           <div className="lg:sticky lg:top-10">
             {activeImage ? (
@@ -379,6 +464,355 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
               <p className="mt-5 font-serif text-3xl text-[#2f2027]">
                 {isFreeProduct ? "Free" : formattedPrice}
               </p>
+
+              <div
+                ref={checkoutRef}
+                id="product-checkout"
+                className="mt-6 scroll-mt-6 rounded-[1rem] border border-[#ecd5dc] bg-white p-5 sm:p-6"
+              >
+                {phase === "checkout" ? (
+                  <>
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#b15b73]">
+                          {isFreeProduct ? "Free Delivery" : "Secure Checkout"}
+                        </p>
+                        <h2 className="mt-3 font-serif text-3xl text-[#3d2630]">
+                          {isFreeProduct ? "Get this product" : "Complete your order"}
+                        </h2>
+                      </div>
+
+                      <div className="rounded-full border border-[#eed8de] bg-[#fff7f4] px-3 py-2 text-xs font-medium text-[#945265]">
+                        {isFreeProduct ? "Free" : "Paystack"}
+                      </div>
+                    </div>
+
+                    {isFreeProduct ? (
+                      <>
+                        <p className="mt-4 text-sm leading-6 text-[#6f5560]">
+                          Download the available files directly. No email delivery is needed for free products.
+                        </p>
+
+                        <div className="mt-6 space-y-3">
+                          {previewFiles.map((file, index) => (
+                            <a
+                              key={file.name}
+                              href={`/api/products/${encodeURIComponent(guide.slug)}/files/${index}`}
+                              data-checkout-action={index === 0 ? "true" : undefined}
+                              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#a54f68] px-5 text-sm font-semibold text-white transition hover:bg-[#8f4258]"
+                            >
+                              <Download className="h-4 w-4" />
+                              Download {file.name}
+                            </a>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="mt-4 text-sm leading-6 text-[#6f5560]">
+                          Enter your email to receive your receipt and delivery details after checkout.
+                        </p>
+
+                        <div className="mt-6 rounded-[1.75rem] border border-[#f1dde2] bg-[linear-gradient(180deg,#fff9f7_0%,#fff3f0_100%)] p-5">
+                          <div className="flex items-end justify-between gap-4">
+                            <div>
+                              <p className="text-sm text-[#7d5d67]">
+                                {displayedListCurrency === "USD" ? "USD list price" : "Price"}
+                              </p>
+                              <p className="mt-1 font-serif text-4xl text-[#3d2630]">
+                                {formattedPrice}
+                              </p>
+                            </div>
+
+                            <div className="rounded-2xl bg-white px-3 py-2 text-xs font-medium text-[#945265] shadow-sm">
+                              Email delivery after payment
+                            </div>
+                          </div>
+
+                          <div className="mt-5 space-y-3 text-sm text-[#6f5560]">
+                            <div className="flex items-center justify-between gap-4">
+                              <span>{guide.title}</span>
+                              <span>{formattedPrice}</span>
+                            </div>
+                            <div className="flex items-center justify-between gap-4">
+                              <span>Secure checkout</span>
+                              <span>Included</span>
+                            </div>
+                            <div className="flex items-center justify-between gap-4 border-t border-[#f1dde2] pt-3 font-semibold text-[#4a2f38]">
+                              <span>Paystack will charge in NGN</span>
+                              <span>{formattedCharge}</span>
+                            </div>
+                          </div>
+                          {quote?.kind === "usd" ? (
+                            <p className="mt-3 text-xs text-[#8c6e78]">
+                              Exchange rates are checked daily. Your card provider may use a
+                              different rate when converting NGN to your local currency.
+                            </p>
+                          ) : null}
+                        </div>
+
+                        <form className="mt-6 space-y-4" onSubmit={handleCheckoutPreview}>
+                          <div className="space-y-2">
+                            <label
+                              htmlFor="guide-email"
+                              className="block text-sm font-medium text-[#4a2f38]"
+                            >
+                              Email for receipt and delivery
+                            </label>
+
+                            <Input
+                              aria-describedby={emailError ? "guide-email-error" : "guide-email-note"}
+                              aria-invalid={Boolean(emailError)}
+                              className="h-12 rounded-xl border-[#e8cfd7] bg-[#fffdfc] text-[#3d2630] placeholder:text-[#b08b96]"
+                              id="guide-email"
+                              onChange={(event) => {
+                                setEmail(event.target.value);
+                                if (emailError) {
+                                  setEmailError("");
+                                }
+                              }}
+                              placeholder="you@example.com"
+                              type="email"
+                              value={email}
+                            />
+
+                            {emailError ? (
+                              <p className="text-sm text-rose-600" id="guide-email-error">
+                                {emailError}
+                              </p>
+                            ) : (
+                              <p className="text-xs leading-5 text-[#8c6e78]" id="guide-email-note">
+                                We&apos;ll send your receipt and access details here.
+                              </p>
+                            )}
+
+                            {generalError ? (
+                              <p className="text-sm text-rose-600">{generalError}</p>
+                            ) : null}
+                            {quoteError ? (
+                              <p className="text-sm text-rose-600">
+                                {quoteError}{" "}
+                                <button
+                                  type="button"
+                                  className="underline"
+                                  onClick={() => setQuoteAttempt((attempt) => attempt + 1)}
+                                >
+                                  Try again
+                                </button>
+                              </p>
+                            ) : null}
+                          </div>
+
+                          <button
+                            type="submit"
+                            data-checkout-action="true"
+                            disabled={isSubmitting || !quote}
+                            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#a54f68] px-5 text-sm font-semibold text-white transition hover:bg-[#8f4258]"
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Opening Paystack
+                              </>
+                            ) : (
+                              <>
+                                Proceed
+                                <ArrowRight className="h-4 w-4" />
+                              </>
+                            )}
+                          </button>
+                        </form>
+                      </>
+                    )}
+                  </>
+                ) : phase === "verifying" ? (
+                  <>
+                    <div className="rounded-[1.75rem] border border-[#dbe6f1] bg-[linear-gradient(180deg,#fbfdff_0%,#f2f7fb_100%)] p-5">
+                      <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#48627a] shadow-sm">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        Confirming Payment
+                      </div>
+
+                      <h2 className="mt-4 font-serif text-3xl text-[#243647]">
+                        We&apos;re verifying your order
+                      </h2>
+
+                      <p className="mt-3 text-sm leading-6 text-[#53697d]">
+                        {statusMessage}
+                      </p>
+                    </div>
+
+                    <div className="mt-6 rounded-[1.5rem] border border-[#dde7ef] bg-white p-4">
+                      <p className="text-sm font-semibold text-[#314556]">
+                        What happens next
+                      </p>
+                      <ul className="mt-4 space-y-3 text-sm leading-6 text-[#5e7486]">
+                        {[
+                          "Paystack confirms the final transaction status.",
+                          "We prepare your product files for delivery.",
+                          "Your receipt and document links are sent to your email.",
+                        ].map((item) => (
+                          <li key={item} className="flex items-start gap-3">
+                            <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#edf3f8] text-[#5d7992]">
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            </span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {orderReference ? (
+                        <p className="mt-4 text-xs uppercase tracking-[0.18em] text-[#7d92a3]">
+                          Reference: {orderReference}
+                        </p>
+                      ) : null}
+                    </div>
+                  </>
+                ) : phase === "success" ? (
+                  <>
+                    <div className="rounded-[1.75rem] border border-[#d7eadc] bg-[linear-gradient(180deg,#f7fffa_0%,#eefaf1_100%)] p-5">
+                      <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#4a8f63] shadow-sm">
+                        <Check className="h-3.5 w-3.5" />
+                        Payment Received
+                      </div>
+
+                      <h2 className="mt-4 font-serif text-3xl text-[#234130]">
+                        Your product is on the way
+                      </h2>
+
+                      <p className="mt-3 text-sm leading-6 text-[#4d6b59]">
+                        {statusMessage}
+                      </p>
+                    </div>
+
+                    <div className="mt-6 rounded-[1.75rem] border border-[#ecdae0] bg-[#fffaf8] p-5">
+                      <p className="text-sm font-semibold text-[#4a2f38]">
+                        Delivery email
+                      </p>
+                      <p className="mt-2 text-sm text-[#6f5560]">
+                        Your access details will be sent to
+                      </p>
+                      <p className="mt-2 text-base font-semibold text-[#3d2630]">
+                        {successEmail}
+                      </p>
+
+                      {orderReference ? (
+                        <p className="mt-3 text-xs uppercase tracking-[0.18em] text-[#8a6d76]">
+                          Reference: {orderReference}
+                        </p>
+                      ) : null}
+
+                      <div className="mt-5 space-y-3">
+                        {previewFiles.map((file) => (
+                          <div
+                            key={file.name}
+                            className="flex items-center gap-3 rounded-[1.25rem] border border-[#e5efe7] bg-white px-4 py-3"
+                          >
+                            <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#e8f6ec] text-[#4a8f63]">
+                              <Check className="h-4 w-4" />
+                            </span>
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-medium text-[#355141]">
+                                {file.name}
+                              </p>
+                              <p className="mt-1 text-xs text-[#62806d]">
+                                Access details will be delivered to your inbox
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="mt-6 rounded-[1.5rem] border border-[#ecdae0] bg-white p-4">
+                      <p className="text-sm font-semibold text-[#4a2f38]">
+                        What happens next
+                      </p>
+                      <ul className="mt-4 space-y-3 text-sm leading-6 text-[#6f5560]">
+                        {[
+                          isFreeProduct
+                            ? "Your product access details are sent to your inbox."
+                            : "A receipt is sent to your inbox.",
+                          isFreeProduct
+                            ? "You can save the delivery email for later access."
+                            : "Your product access details follow by email.",
+                          "You can return here anytime if you need help with your order.",
+                        ].map((item) => (
+                          <li key={item} className="flex items-start gap-3">
+                            <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f8e7ec] text-[#9f5b6f]">
+                              <Check className="h-3.5 w-3.5" />
+                            </span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl border border-[#e6d1d8] bg-white text-sm font-medium text-[#684b56] transition hover:bg-[#fff7f4]"
+                      onClick={() => {
+                        setPhase("checkout");
+                        setGeneralError("");
+                        setOrderReference(null);
+                        setStatusMessage(
+                          isFreeProduct
+                            ? "We’ll deliver your product to your inbox."
+                            : "We’ll deliver your product as soon as Paystack confirms the payment."
+                        );
+                      }}
+                    >
+                      Return to checkout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="rounded-[1.75rem] border border-[#f0d7d9] bg-[linear-gradient(180deg,#fffafa_0%,#fff3f4_100%)] p-5">
+                      <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#b2556a] shadow-sm">
+                        <TriangleAlert className="h-3.5 w-3.5" />
+                        Confirmation Needed
+                      </div>
+
+                      <h2 className="mt-4 font-serif text-3xl text-[#4e2430]">
+                        We couldn&apos;t finish confirming this payment
+                      </h2>
+
+                      <p className="mt-3 text-sm leading-6 text-[#7a4a58]">
+                        {generalError}
+                      </p>
+                    </div>
+
+                    {orderReference ? (
+                      <div className="mt-6 rounded-[1.5rem] border border-[#ecdae0] bg-white p-4">
+                        <p className="text-sm font-semibold text-[#4a2f38]">
+                          Payment reference
+                        </p>
+                        <p className="mt-2 text-sm text-[#6f5560]">{orderReference}</p>
+                      </div>
+                    ) : null}
+
+                    <button
+                      type="button"
+                      className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl bg-[#a54f68] px-5 text-sm font-semibold text-white transition hover:bg-[#8f4258]"
+                      onClick={() => {
+                        if (orderReference) {
+                          setGeneralError("");
+                          setStatusMessage(
+                            "We’re checking Paystack again and preparing your email."
+                          );
+                          void confirmPayment(orderReference);
+                          return;
+                        }
+
+                        setPhase("checkout");
+                        setGeneralError("");
+                      }}
+                    >
+                      {orderReference ? "Try confirmation again" : "Return to checkout"}
+                    </button>
+                  </>
+                )}
+              </div>
 
               <p className="mt-5 max-w-2xl text-base leading-7 text-[#6f5560] sm:text-lg">
                 {guide.description}
@@ -477,338 +911,43 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
                 ))}
               </div> */}
 
-              {hasBodyContent ? (
-                <RichText
-                  className="mt-10"
-                  value={guide.body ?? []}
-                  defaultImageAlt={guide.title}
-                />
-              ) : null}
-            <div className="mt-8 rounded-[1rem] border border-[#ecd5dc] bg-white p-5 sm:p-6">
-              {phase === "checkout" ? (
-                <>
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#b15b73]">
-                        {isFreeProduct ? "Free Delivery" : "Secure Checkout"}
-                      </p>
-                      <h2 className="mt-3 font-serif text-3xl text-[#3d2630]">
-                        {isFreeProduct ? "Get this product" : "Complete your order"}
-                      </h2>
-                    </div>
 
-                    <div className="rounded-full border border-[#eed8de] bg-[#fff7f4] px-3 py-2 text-xs font-medium text-[#945265]">
-                      {isFreeProduct ? "Free" : "Paystack"}
-                    </div>
-                  </div>
-
-                  {isFreeProduct ? (
-                    <>
-                      <p className="mt-4 text-sm leading-6 text-[#6f5560]">
-                        Download the available files directly. No email delivery is needed for free products.
-                      </p>
-
-                      <div className="mt-6 space-y-3">
-                        {previewFiles.map((file, index) => (
-                          <a
-                            key={file.name}
-                            href={`/api/products/${encodeURIComponent(guide.slug)}/files/${index}`}
-                            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#a54f68] px-5 text-sm font-semibold text-white transition hover:bg-[#8f4258]"
-                          >
-                            <Download className="h-4 w-4" />
-                            Download {file.name}
-                          </a>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <p className="mt-4 text-sm leading-6 text-[#6f5560]">
-                        Enter your email to receive your receipt and delivery details after checkout.
-                      </p>
-
-                      <div className="mt-6 rounded-[1.75rem] border border-[#f1dde2] bg-[linear-gradient(180deg,#fff9f7_0%,#fff3f0_100%)] p-5">
-                        <div className="flex items-end justify-between gap-4">
-                          <div>
-                            <p className="text-sm text-[#7d5d67]">Total</p>
-                            <p className="mt-1 font-serif text-4xl text-[#3d2630]">
-                              {formattedPrice}
-                            </p>
-                          </div>
-
-                          <div className="rounded-2xl bg-white px-3 py-2 text-xs font-medium text-[#945265] shadow-sm">
-                            Email delivery after payment
-                          </div>
-                        </div>
-
-                        <div className="mt-5 space-y-3 text-sm text-[#6f5560]">
-                          <div className="flex items-center justify-between gap-4">
-                            <span>{guide.title}</span>
-                            <span>{formattedPrice}</span>
-                          </div>
-                          <div className="flex items-center justify-between gap-4">
-                            <span>Secure checkout</span>
-                            <span>Included</span>
-                          </div>
-                          <div className="flex items-center justify-between gap-4 border-t border-[#f1dde2] pt-3 font-semibold text-[#4a2f38]">
-                            <span>Order total</span>
-                            <span>{formattedPrice}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <form className="mt-6 space-y-4" onSubmit={handleCheckoutPreview}>
-                        <div className="space-y-2">
-                          <label
-                            htmlFor="guide-email"
-                            className="block text-sm font-medium text-[#4a2f38]"
-                          >
-                            Email for receipt and delivery
-                          </label>
-
-                          <Input
-                            aria-describedby={emailError ? "guide-email-error" : "guide-email-note"}
-                            aria-invalid={Boolean(emailError)}
-                            className="h-12 rounded-xl border-[#e8cfd7] bg-[#fffdfc] text-[#3d2630] placeholder:text-[#b08b96]"
-                            id="guide-email"
-                            onChange={(event) => {
-                              setEmail(event.target.value);
-                              if (emailError) {
-                                setEmailError("");
-                              }
-                            }}
-                            placeholder="you@example.com"
-                            type="email"
-                            value={email}
-                          />
-
-                          {emailError ? (
-                            <p className="text-sm text-rose-600" id="guide-email-error">
-                              {emailError}
-                            </p>
-                          ) : (
-                            <p className="text-xs leading-5 text-[#8c6e78]" id="guide-email-note">
-                              We&apos;ll send your receipt and access details here.
-                            </p>
-                          )}
-
-                          {generalError ? (
-                            <p className="text-sm text-rose-600">{generalError}</p>
-                          ) : null}
-                        </div>
-
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#a54f68] px-5 text-sm font-semibold text-white transition hover:bg-[#8f4258]"
-                        >
-                          {isSubmitting ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              Opening Paystack
-                            </>
-                          ) : (
-                            <>
-                              Proceed
-                              <ArrowRight className="h-4 w-4" />
-                            </>
-                          )}
-                        </button>
-                      </form>
-                    </>
-                  )}
-                </>
-              ) : phase === "verifying" ? (
-                <>
-                  <div className="rounded-[1.75rem] border border-[#dbe6f1] bg-[linear-gradient(180deg,#fbfdff_0%,#f2f7fb_100%)] p-5">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#48627a] shadow-sm">
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      Confirming Payment
-                    </div>
-
-                    <h2 className="mt-4 font-serif text-3xl text-[#243647]">
-                      We&apos;re verifying your order
-                    </h2>
-
-                    <p className="mt-3 text-sm leading-6 text-[#53697d]">
-                      {statusMessage}
-                    </p>
-                  </div>
-
-                  <div className="mt-6 rounded-[1.5rem] border border-[#dde7ef] bg-white p-4">
-                    <p className="text-sm font-semibold text-[#314556]">
-                      What happens next
-                    </p>
-                    <ul className="mt-4 space-y-3 text-sm leading-6 text-[#5e7486]">
-                      {[
-                        "Paystack confirms the final transaction status.",
-                        "We prepare your product files for delivery.",
-                        "Your receipt and document links are sent to your email.",
-                      ].map((item) => (
-                        <li key={item} className="flex items-start gap-3">
-                          <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#edf3f8] text-[#5d7992]">
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          </span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {orderReference ? (
-                      <p className="mt-4 text-xs uppercase tracking-[0.18em] text-[#7d92a3]">
-                        Reference: {orderReference}
-                      </p>
-                    ) : null}
-                  </div>
-                </>
-              ) : phase === "success" ? (
-                <>
-                  <div className="rounded-[1.75rem] border border-[#d7eadc] bg-[linear-gradient(180deg,#f7fffa_0%,#eefaf1_100%)] p-5">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#4a8f63] shadow-sm">
-                      <Check className="h-3.5 w-3.5" />
-                      Payment Received
-                    </div>
-
-                    <h2 className="mt-4 font-serif text-3xl text-[#234130]">
-                      Your product is on the way
-                    </h2>
-
-                    <p className="mt-3 text-sm leading-6 text-[#4d6b59]">
-                      {statusMessage}
-                    </p>
-                  </div>
-
-                  <div className="mt-6 rounded-[1.75rem] border border-[#ecdae0] bg-[#fffaf8] p-5">
-                    <p className="text-sm font-semibold text-[#4a2f38]">
-                      Delivery email
-                    </p>
-                    <p className="mt-2 text-sm text-[#6f5560]">
-                      Your access details will be sent to
-                    </p>
-                    <p className="mt-2 text-base font-semibold text-[#3d2630]">
-                      {successEmail}
-                    </p>
-
-                    {orderReference ? (
-                      <p className="mt-3 text-xs uppercase tracking-[0.18em] text-[#8a6d76]">
-                        Reference: {orderReference}
-                      </p>
-                    ) : null}
-
-                    <div className="mt-5 space-y-3">
-                      {previewFiles.map((file) => (
-                        <div
-                          key={file.name}
-                          className="flex items-center gap-3 rounded-[1.25rem] border border-[#e5efe7] bg-white px-4 py-3"
-                        >
-                          <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#e8f6ec] text-[#4a8f63]">
-                            <Check className="h-4 w-4" />
-                          </span>
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-medium text-[#355141]">
-                              {file.name}
-                            </p>
-                            <p className="mt-1 text-xs text-[#62806d]">
-                              Access details will be delivered to your inbox
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-6 rounded-[1.5rem] border border-[#ecdae0] bg-white p-4">
-                    <p className="text-sm font-semibold text-[#4a2f38]">
-                      What happens next
-                    </p>
-                    <ul className="mt-4 space-y-3 text-sm leading-6 text-[#6f5560]">
-                      {[
-                        isFreeProduct
-                          ? "Your product access details are sent to your inbox."
-                          : "A receipt is sent to your inbox.",
-                        isFreeProduct
-                          ? "You can save the delivery email for later access."
-                          : "Your product access details follow by email.",
-                        "You can return here anytime if you need help with your order.",
-                      ].map((item) => (
-                        <li key={item} className="flex items-start gap-3">
-                          <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f8e7ec] text-[#9f5b6f]">
-                            <Check className="h-3.5 w-3.5" />
-                          </span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl border border-[#e6d1d8] bg-white text-sm font-medium text-[#684b56] transition hover:bg-[#fff7f4]"
-                    onClick={() => {
-                      setPhase("checkout");
-                      setGeneralError("");
-                      setOrderReference(null);
-                      setStatusMessage(
-                        isFreeProduct
-                          ? "We’ll deliver your product to your inbox."
-                          : "We’ll deliver your product as soon as Paystack confirms the payment."
-                      );
-                    }}
-                  >
-                    Return to checkout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="rounded-[1.75rem] border border-[#f0d7d9] bg-[linear-gradient(180deg,#fffafa_0%,#fff3f4_100%)] p-5">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#b2556a] shadow-sm">
-                      <TriangleAlert className="h-3.5 w-3.5" />
-                      Confirmation Needed
-                    </div>
-
-                    <h2 className="mt-4 font-serif text-3xl text-[#4e2430]">
-                      We couldn&apos;t finish confirming this payment
-                    </h2>
-
-                    <p className="mt-3 text-sm leading-6 text-[#7a4a58]">
-                      {generalError}
-                    </p>
-                  </div>
-
-                  {orderReference ? (
-                    <div className="mt-6 rounded-[1.5rem] border border-[#ecdae0] bg-white p-4">
-                      <p className="text-sm font-semibold text-[#4a2f38]">
-                        Payment reference
-                      </p>
-                      <p className="mt-2 text-sm text-[#6f5560]">{orderReference}</p>
-                    </div>
-                  ) : null}
-
-                  <button
-                    type="button"
-                    className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl bg-[#a54f68] px-5 text-sm font-semibold text-white transition hover:bg-[#8f4258]"
-                    onClick={() => {
-                      if (orderReference) {
-                        setGeneralError("");
-                        setStatusMessage(
-                          "We’re checking Paystack again and preparing your email."
-                        );
-                        void confirmPayment(orderReference);
-                        return;
-                      }
-
-                      setPhase("checkout");
-                      setGeneralError("");
-                    }}
-                  >
-                    {orderReference ? "Try confirmation again" : "Return to checkout"}
-                  </button>
-                </>
-              )}
-            </div>
+            {hasBodyContent ? (
+              <RichText
+                className="mt-10"
+                value={guide.body ?? []}
+                defaultImageAlt={guide.title}
+              />
+            ) : null}
           </div>
         </div>
       </div>
+      {!isCheckoutVisible && phase === "checkout" ? (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#ead8de] bg-white/95 px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)_+_0.75rem)] shadow-[0_-8px_24px_rgba(61,38,48,0.08)] backdrop-blur">
+          <div className="mx-auto flex max-w-7xl items-center gap-4">
+            <div className="hidden min-w-0 flex-1 sm:block">
+              <p className="truncate text-sm font-semibold text-[#4a2f38]">{guide.title}</p>
+              <p className="mt-0.5 text-xs text-[#8c6e78]">
+                {isFreeProduct ? "Free download" : formattedPrice}
+              </p>
+            </div>
+            <button
+              type="button"
+              aria-controls="product-checkout"
+              onClick={scrollToCheckout}
+              className="mx-auto flex h-12 w-full max-w-xl items-center justify-between rounded-xl bg-[#a54f68] px-5 text-sm font-semibold text-white transition hover:bg-[#8f4258] sm:mx-0 sm:w-auto sm:min-w-64"
+            >
+              <span className="sm:hidden">
+                {isFreeProduct ? "Get this product for free" : `Checkout · ${formattedPrice}`}
+              </span>
+              <span className="hidden sm:inline">
+                {isFreeProduct ? "Get this product for free" : "Continue to checkout"}
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0" />
+            </button>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

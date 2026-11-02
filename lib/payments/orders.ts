@@ -160,6 +160,12 @@ export async function createGuideOrder(
   return record;
 }
 
+export async function getGuideOrderByPurchaseKey(purchaseKey: string) {
+  const snapshot = await getGuidePurchaseRef(purchaseKey).get();
+  const reference = snapshot.data()?.reference;
+  return typeof reference === "string" ? getGuideOrder(reference) : null;
+}
+
 export async function reserveGuideOrderPurchase(
   order: Omit<
     GuideOrderRecord,

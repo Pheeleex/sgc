@@ -26,8 +26,8 @@ export function formatCurrency(
 ) {
   return new Intl.NumberFormat(currency === "NGN" ? "en-NG" : "en-US", {
     currency,
-    maximumFractionDigits: currency === "NGN" ? 0 : 2,
-    minimumFractionDigits: currency === "NGN" ? 0 : 2,
+    maximumFractionDigits: currency === "NGN" && Number.isInteger(amount) ? 0 : 2,
+    minimumFractionDigits: currency === "NGN" && Number.isInteger(amount) ? 0 : 2,
     style: "currency",
   }).format(amount);
 }
