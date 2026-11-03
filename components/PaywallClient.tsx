@@ -160,8 +160,8 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
     if (!checkoutAction) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => setIsCheckoutVisible(entry.isIntersecting),
-      { threshold: 0.1 }
+      (entries) => setIsCheckoutVisible((entries[0]?.intersectionRatio ?? 0) >= 0.95),
+      { threshold: [0, 0.95] }
     );
     observer.observe(checkoutAction);
 
@@ -464,6 +464,114 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
               <p className="mt-5 font-serif text-3xl text-[#2f2027]">
                 {isFreeProduct ? "Free" : formattedPrice}
               </p>
+
+
+
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[#6f5560] sm:text-lg">
+                {guide.description}
+              </p>
+
+              <div className="mt-8 grid gap-5">
+                <div className="rounded-[1.75rem] border border-[#f0d7de] bg-[linear-gradient(145deg,#fff4f7_0%,#fffdfc_58%,#fef0e6_100%)] p-5 shadow-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#b15b73]">
+                        What&apos;s Included
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-[#7a5d66]">
+                        {hasDeliverableFiles
+                          ? "Your files stay protected until access is ready."
+                          : "No deliverable files have been attached to this product yet."}
+                      </p>
+                    </div>
+
+                    <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-2 text-xs font-medium text-[#945265] shadow-sm">
+                      <Lock className="h-3.5 w-3.5" />
+                      {isFreeProduct ? "Email Access" : "Locked Until Payment"}
+                    </div>
+                  </div>
+
+                  <div className="mt-6 space-y-3">
+                    {hasDeliverableFiles ? (
+                      previewFiles.slice(0, 3).map((file, index) => (
+                        <div
+                          key={file.name}
+                          className={cn(
+                            "flex items-center gap-4 rounded-[1.4rem] border border-white/80 bg-white/85 px-4 py-4 shadow-sm backdrop-blur",
+                            index > 0 ? "ml-3" : ""
+                          )}
+                        >
+                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f9e5ea] text-[#a3576b]">
+                            <Lock className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-[#4a2f38]">
+                              {file.name}
+                            </p>
+                            <p className="mt-1 text-xs text-[#8d6f77]">
+                              {isFreeProduct
+                                ? "Available for direct download"
+                                : "Delivered by email after a successful payment"}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="rounded-[1.4rem] border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900">
+                        This product is not ready for download yet.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                {[
+                  {
+                    icon: Sparkles,
+                    label: "Beautifully designed",
+                    copy: "A polished digital product experience that feels calm, clear, and easy to use.",
+                  },
+                  {
+                    icon: CreditCard,
+                    label: isFreeProduct ? "Simple access" : "Secure payment",
+                    copy: isFreeProduct
+                      ? "Download the product files directly without waiting for an email."
+                      : "Checkout is quick and protected through Paystack.",
+                  },
+                  {
+                    icon: Mail,
+                    label: isFreeProduct ? "Instant download" : "Inbox delivery",
+                    copy: isFreeProduct
+                      ? "Free files open from protected download links."
+                      : "Your receipt and access details are sent straight to your email.",
+                  },
+                ].map(({ icon: Icon, label, copy }) => (
+                  <div
+                    key={label}
+                    className="rounded-[1.5rem] border border-[#f1dde2] bg-[#fffdfc] p-4"
+                  >
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#f9e9ee] text-[#9e5c6e]">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <h2 className="mt-4 text-base font-semibold text-[#4a2f38]">
+                      {label}
+                    </h2>
+                    <p className="mt-2 text-sm leading-6 text-[#7a5d66]">
+                      {copy}
+                    </p>
+                  </div>
+                ))}
+              </div> */}
+
+
+            {hasBodyContent ? (
+              <RichText
+                className="mt-10"
+                value={guide.body ?? []}
+                defaultImageAlt={guide.title}
+              />
+            ) : null}
 
               <div
                 ref={checkoutRef}
@@ -813,112 +921,6 @@ export default function PaywallClient({ guide }: PaywallClientProps) {
                   </>
                 )}
               </div>
-
-              <p className="mt-5 max-w-2xl text-base leading-7 text-[#6f5560] sm:text-lg">
-                {guide.description}
-              </p>
-
-              <div className="mt-8 grid gap-5">
-                <div className="rounded-[1.75rem] border border-[#f0d7de] bg-[linear-gradient(145deg,#fff4f7_0%,#fffdfc_58%,#fef0e6_100%)] p-5 shadow-sm">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#b15b73]">
-                        What&apos;s Included
-                      </p>
-                      <p className="mt-2 text-sm leading-6 text-[#7a5d66]">
-                        {hasDeliverableFiles
-                          ? "Your files stay protected until access is ready."
-                          : "No deliverable files have been attached to this product yet."}
-                      </p>
-                    </div>
-
-                    <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-2 text-xs font-medium text-[#945265] shadow-sm">
-                      <Lock className="h-3.5 w-3.5" />
-                      {isFreeProduct ? "Email Access" : "Locked Until Payment"}
-                    </div>
-                  </div>
-
-                  <div className="mt-6 space-y-3">
-                    {hasDeliverableFiles ? (
-                      previewFiles.slice(0, 3).map((file, index) => (
-                        <div
-                          key={file.name}
-                          className={cn(
-                            "flex items-center gap-4 rounded-[1.4rem] border border-white/80 bg-white/85 px-4 py-4 shadow-sm backdrop-blur",
-                            index > 0 ? "ml-3" : ""
-                          )}
-                        >
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f9e5ea] text-[#a3576b]">
-                            <Lock className="h-5 w-5" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-[#4a2f38]">
-                              {file.name}
-                            </p>
-                            <p className="mt-1 text-xs text-[#8d6f77]">
-                              {isFreeProduct
-                                ? "Available for direct download"
-                                : "Delivered by email after a successful payment"}
-                            </p>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="rounded-[1.4rem] border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900">
-                        This product is not ready for download yet.
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                {[
-                  {
-                    icon: Sparkles,
-                    label: "Beautifully designed",
-                    copy: "A polished digital product experience that feels calm, clear, and easy to use.",
-                  },
-                  {
-                    icon: CreditCard,
-                    label: isFreeProduct ? "Simple access" : "Secure payment",
-                    copy: isFreeProduct
-                      ? "Download the product files directly without waiting for an email."
-                      : "Checkout is quick and protected through Paystack.",
-                  },
-                  {
-                    icon: Mail,
-                    label: isFreeProduct ? "Instant download" : "Inbox delivery",
-                    copy: isFreeProduct
-                      ? "Free files open from protected download links."
-                      : "Your receipt and access details are sent straight to your email.",
-                  },
-                ].map(({ icon: Icon, label, copy }) => (
-                  <div
-                    key={label}
-                    className="rounded-[1.5rem] border border-[#f1dde2] bg-[#fffdfc] p-4"
-                  >
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#f9e9ee] text-[#9e5c6e]">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <h2 className="mt-4 text-base font-semibold text-[#4a2f38]">
-                      {label}
-                    </h2>
-                    <p className="mt-2 text-sm leading-6 text-[#7a5d66]">
-                      {copy}
-                    </p>
-                  </div>
-                ))}
-              </div> */}
-
-
-            {hasBodyContent ? (
-              <RichText
-                className="mt-10"
-                value={guide.body ?? []}
-                defaultImageAlt={guide.title}
-              />
-            ) : null}
           </div>
         </div>
       </div>
