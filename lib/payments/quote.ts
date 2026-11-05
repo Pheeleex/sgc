@@ -44,7 +44,7 @@ async function fetchCurrencyApiRate(): Promise<CachedRate> {
   const response = await fetch(
     "https://api.currencyapi.com/v3/latest?base_currency=USD&currencies=NGN",
     {
-      headers: { apikey: getRequiredEnv("CURRENCYAPI_API_KEY") },
+      headers: { apikey: getRequiredEnv("CURRENCY_CONVERT") },
       cache: "no-store",
       signal: AbortSignal.timeout(10_000),
     }
